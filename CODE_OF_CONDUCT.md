@@ -1,4 +1,4 @@
-# Solution Center Java Maven Starter Project Code of Conduct
+# Flexy Canary Connector Code of Conduct
 
 ## Our Pledge
 
