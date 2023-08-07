@@ -22,13 +22,4 @@ public class CanaryConnectorMain {
     System.out.println(
         "App version: " + CanaryConnectorMain.class.getPackage().getImplementationVersion());
   }
-
-  /**
-   * Returns an example value which is used in the example test class.
-   *
-   * @return example integer
-   */
-  public static int getExampleValue() {
-    return 10;
-  }
 }
