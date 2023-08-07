@@ -1,14 +1,16 @@
-# Solution Center Java Maven Starter Project (sc-java-maven-starter-project)
+# Flexy Canary Connector (flexy-canary-connector)
 
 ## Description
 
-A basic starting project (template) for Java applications developed on the Ewon JTK using Maven.
+The Flexy Canary Connector is a Java Application for the Ewon Flexy which allows for synchronizing
+Ewon Flexy data to Canary\'s Tag Historian.
 
-This project is intended to replace the functionality provided by the Ewon JTK's `build.xml` Ant
-build file for projects, and improve upon the development experience by providing a more modern
-build system and project structure.
+### NOTICE
+
+This project is currently under development and is not yet ready for production use. Please check
+back later for updates.
 
 ## Documentation
 
 The documentation for this project is available in a user-friendly format (via GitHub Pages) on the
-[Solution Center Java Maven Starter Project Homepage](https://hms-networks.github.io/sc-java-maven-starter-project/).
+[Flexy Canary Connector Homepage](https://hms-networks.github.io/flexy-canary-connector/).
