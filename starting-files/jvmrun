@@ -1,1 +1,1 @@
--heapsize 25M -classpath /usr/sc-java-maven-starter-project-0.0.1-full.jar -emain com.hms_networks.sc.canary.CanaryConnectorMain
+-heapsize 25M -classpath /usr/flexy-canary-connector-1.0.0-full.jar -emain com.hms_networks.sc.canary.CanaryConnectorMain
