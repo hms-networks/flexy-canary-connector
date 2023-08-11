@@ -2,6 +2,7 @@ package com.hms_networks.sc.canary.temp_abstract;
 
 import com.hms_networks.americas.sc.extensions.historicaldata.HistoricalDataQueueManager;
 import com.hms_networks.americas.sc.extensions.logging.Logger;
+import java.io.File;
 
 /**
  * Constants for the {@link AbstractConnectorMain}, {@link AbstractConnectorMainUtils}, and {@link
@@ -127,6 +128,27 @@ public class AbstractConnectorMainConstants {
   public static final boolean CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT = false;
 
   /**
+   * The folder of the default configuration file path. This value is used to build the default
+   * configuration file path in {@link #CONFIG_FILE_PATH_DEFAULT}. It is also used to build custom
+   * default configuration file paths based on the key of the connector configuration.
+   */
+  public static final String CONFIG_FILE_PATH_DEFAULT_FOLDER = File.separator + "usr";
+
+  /**
+   * The name of the default configuration file path. This value is used to build the default
+   * configuration file path in {@link #CONFIG_FILE_PATH_DEFAULT}. It is also used to build custom
+   * default configuration file paths based on the key of the connector configuration.
+   */
+  public static final String CONFIG_FILE_PATH_DEFAULT_NAME = "ConnectorConfig";
+
+  /**
+   * The extension of the default configuration file path. This value is used to build the default
+   * configuration file path in {@link #CONFIG_FILE_PATH_DEFAULT}. It is also used to build custom
+   * default configuration file paths based on the key of the connector configuration.
+   */
+  public static final String CONFIG_FILE_PATH_DEFAULT_EXTENSION = ".json";
+
+  /**
    * The default configuration file path. This value is used if no configuration file path is
    * specified in the constructor.
    *
@@ -135,7 +157,11 @@ public class AbstractConnectorMainConstants {
    * functionality should simply work out of the box, but if a connector does not use a unique key
    * for its specific connector object in the configuration file, issues may arise.
    */
-  public static final String CONFIG_FILE_PATH_DEFAULT = "/usr/ConnectorConfig.json";
+  public static final String CONFIG_FILE_PATH_DEFAULT =
+      CONFIG_FILE_PATH_DEFAULT_FOLDER
+          + File.separator
+          + CONFIG_FILE_PATH_DEFAULT_NAME
+          + CONFIG_FILE_PATH_DEFAULT_EXTENSION;
 
   // endregion
 
