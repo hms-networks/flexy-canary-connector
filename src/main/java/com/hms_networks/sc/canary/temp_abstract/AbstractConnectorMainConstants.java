@@ -87,7 +87,7 @@ public class AbstractConnectorMainConstants {
       "QueueEnableDiagnosticTags";
 
   /** Default value of the 'LogLevel' object in the configuration file. */
-  public static final int CONFIG_FILE_LOG_LEVEL_DEFAULT = Logger.LOG_LEVEL_INFO;
+  public static final int CONFIG_FILE_LOG_LEVEL_DEFAULT = Logger.LOG_LEVEL_WARN;
 
   /** Default value of the 'UTF8StringSupport' object in the configuration file. */
   public static final boolean CONFIG_FILE_UTF8_STRING_SUPPORT_DEFAULT = false;

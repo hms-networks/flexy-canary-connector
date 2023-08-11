@@ -5,6 +5,7 @@ import com.hms_networks.americas.sc.extensions.config.exceptions.ConfigFileExcep
 import com.hms_networks.americas.sc.extensions.json.JSONException;
 import com.hms_networks.americas.sc.extensions.json.JSONObject;
 import com.hms_networks.americas.sc.extensions.logging.Logger;
+import java.io.File;
 
 /**
  * Abstract class for connector configuration files.
@@ -53,6 +54,41 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
   public AbstractConnectorConfig(String configFileConnectorConfigurationObjectKey)
       throws ConfigFileException {
     this.configFilePath = AbstractConnectorMainConstants.CONFIG_FILE_PATH_DEFAULT;
+    this.configFileConnectorConfigurationObjectKey = configFileConnectorConfigurationObjectKey;
+
+    // If configuration exists on disk, read from disk, otherwise write new default configuration
+    if (fileExists()) {
+      read();
+    } else {
+      loadAndSaveDefaultConfiguration();
+    }
+  }
+
+  /**
+   * Constructor for the abstract connector configuration class.
+   *
+   * @param configFileConnectorConfigurationObjectKey the key for the connector object in the
+   *     configuration file. This value <em>must</em> be unique to the connector.
+   * @param createDefaultNameFromKey whether to create the default configuration file name using the
+   *     key, or use the default name specified in {@link
+   *     AbstractConnectorMainConstants#CONFIG_FILE_PATH_DEFAULT}.
+   * @throws ConfigFileException if unable to read/parse an existing configuration file or unable to
+   *     write a new (default) configuration file
+   * @since 1.0.0
+   */
+  public AbstractConnectorConfig(
+      String configFileConnectorConfigurationObjectKey, boolean createDefaultNameFromKey)
+      throws ConfigFileException {
+    if (createDefaultNameFromKey) {
+      this.configFilePath =
+          AbstractConnectorMainConstants.CONFIG_FILE_PATH_DEFAULT_FOLDER
+              + File.separator
+              + configFileConnectorConfigurationObjectKey
+              + AbstractConnectorMainConstants.CONFIG_FILE_PATH_DEFAULT_NAME
+              + AbstractConnectorMainConstants.CONFIG_FILE_PATH_DEFAULT_EXTENSION;
+    } else {
+      this.configFilePath = AbstractConnectorMainConstants.CONFIG_FILE_PATH_DEFAULT;
+    }
     this.configFileConnectorConfigurationObjectKey = configFileConnectorConfigurationObjectKey;
 
     // If configuration exists on disk, read from disk, otherwise write new default configuration
@@ -328,6 +364,17 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
     }
 
     return queueDiagnosticTagsEnabled;
+  }
+
+  /**
+   * Gets the JSON object containing the connector configuration.
+   *
+   * @return connector configuration object
+   * @throws JSONException if unable to get connector configuration object
+   * @since 1.0.0
+   */
+  public JSONObject getConnectorConfigurationObject() throws JSONException {
+    return configurationObject.getJSONObject(configFileConnectorConfigurationObjectKey);
   }
 
   /**
