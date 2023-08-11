@@ -399,11 +399,21 @@ public abstract class AbstractConnectorMain {
     isAppAutoRestartEnabled = SCAppManagement.enableAppAutoRestart();
 
     // Load configuration file
-    AbstractConnectorConfig connectorConfig = connectorConfigLoad();
-    if (connectorConfig == null) {
+    AbstractConnectorConfig connectorConfig;
+    try {
+      connectorConfig = connectorConfigLoad();
+    } catch (Exception e) {
+      Logger.LOG_CRITICAL("Failed to load the connector configuration file!");
+      Logger.LOG_EXCEPTION(e);
+      initializeSuccess = false;
+      connectorConfig = null;
+    }
+
+    // Check if configuration file loaded successfully (if initialization has not failed)
+    if (connectorConfig == null && initializeSuccess) {
       Logger.LOG_CRITICAL("Failed to load the connector configuration file!");
       initializeSuccess = false;
-    } else {
+    } else if (initializeSuccess) {
 
       // Load connector log level (default of TRACE, but should never encounter this)
       int connectorLogLevel = Logger.LOG_LEVEL_TRACE;
@@ -750,9 +760,11 @@ public abstract class AbstractConnectorMain {
    * <p>The {@link AbstractConnectorConfig} object returned by this method is used to configure
    * various aspects of the connector, such as the historical queue settings, log level, etc.
    *
+   * @throws Exception if the configuration file could not be loaded
    * @return the {@link AbstractConnectorConfig} object containing the connector configuration. If
-   *     the configuration file could not be loaded, this method should return null.
+   *     the configuration file could not be loaded, this method should return null or throw an
+   *     exception.
    * @since 1.0.0
    */
-  public abstract AbstractConnectorConfig connectorConfigLoad();
+  public abstract AbstractConnectorConfig connectorConfigLoad() throws Exception;
 }
