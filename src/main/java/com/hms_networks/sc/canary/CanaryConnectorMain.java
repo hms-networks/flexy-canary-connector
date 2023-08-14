@@ -1,6 +1,8 @@
 package com.hms_networks.sc.canary;
 
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
+import com.hms_networks.sc.canary.api.CanaryApiRequestBuilder;
+import com.hms_networks.sc.canary.api.SessionManager;
 import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorConfig;
 import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorMain;
 
@@ -38,6 +40,20 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   private static CanaryConnectorMain instance = null;
 
   /**
+   * Session manager for Canary API.
+   *
+   * @since 1.0.0
+   */
+  private SessionManager sessionManager = null;
+
+  /**
+   * Configuration object for the connector.
+   *
+   * @since 1.0.0
+   */
+  private CanaryConnectorConfig connectorConfig = null;
+
+  /**
    * Constructor for the Canary Connector main class.
    *
    * @since 1.0.0
@@ -47,7 +63,10 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   }
 
   /**
-   * Main method for Canary Connector.
+   * Main method for Canary Connector. The content of this method should not be modified. Instead,
+   * use the appropriate method: {@link #connectorInitialize()}, {@link #connectorStartUp()}, {@link
+   * #connectorLoopRun()}, {@link #connectorLoopPollData()}, {@link #connectorShutDown()}, or {@link
+   * #connectorCleanUp()}.
    *
    * @param args project arguments
    * @since 1.0.0
@@ -70,6 +89,9 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public boolean connectorInitialize() {
+    // Build session manager
+    sessionManager = new SessionManager();
+
     // TODO: Implement connector initialization steps (return true for now)
     return true;
   }
@@ -85,6 +107,8 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public boolean connectorStartUp() {
+    CanaryApiRequestBuilder.setupConfig(connectorConfig);
+
     // TODO: Implement connector startup steps (return true for now)
     return true;
   }
@@ -154,12 +178,61 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * <p>The {@link AbstractConnectorConfig} object returned by this method is used to configure
    * various aspects of the connector, such as the historical queue settings, log level, etc.
    *
+   * <p>NOTE: The only reason this method is necessary is that Java 1.4 doesn't support type
+   * parameterization.
+   *
+   * @throws Exception if the configuration file could not be loaded
    * @return the {@link AbstractConnectorConfig} object containing the connector configuration. If
-   *     the configuration file could not be loaded, this method should return null.
+   *     the configuration file could not be loaded, this method should return null or throw an
+   *     exception.
    * @since 1.0.0
    */
-  public AbstractConnectorConfig connectorConfigLoad() {
-    // TODO: Implement connector config load from CanaryConnectorConfig (return null for now)
-    return null;
+  public AbstractConnectorConfig connectorConfigLoad() throws Exception {
+    connectorConfig = new CanaryConnectorConfig();
+
+    // Check for missing fields
+    boolean configLoadSuccess = true;
+    if (connectorConfig.getApiUrl().equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_URL)) {
+      configLoadSuccess = false;
+    }
+
+    // Handle missing fields
+    if (!configLoadSuccess) {
+      // TODO: Implement HTTP API listener to wait and get values
+    }
+
+    return configLoadSuccess ? connectorConfig : null;
+  }
+
+  /**
+   * TODO: Implement method javadocs. It is probably also worth looking in to whether this method
+   * should throw an exception if instance is null.
+   *
+   * @return
+   */
+  public static CanaryConnectorMain getInstance() {
+    return instance;
+  }
+
+  /**
+   * Gets the session manager for the connector instance.
+   *
+   * @return the session manager for the connector instance
+   * @see #getInstance()
+   * @since 1.0.0
+   */
+  public static SessionManager getSessionManager() {
+    return getInstance().sessionManager;
+  }
+
+  /**
+   * Gets the connector configuration for the connector instance.
+   *
+   * @return the connector configuration for the connector instance
+   * @see #getInstance()
+   * @since 1.0.0
+   */
+  public static CanaryConnectorConfig getConnectorConfig() {
+    return getInstance().connectorConfig;
   }
 }
