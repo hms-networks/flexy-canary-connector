@@ -1,5 +1,7 @@
 package com.hms_networks.sc.canary.api;
 
+import com.hms_networks.americas.sc.extensions.system.time.SCTimeUnit;
+import com.hms_networks.sc.canary.CanaryConnectorMain;
 import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
 
 /**
@@ -17,7 +19,7 @@ public class SessionManager {
   private static String currentUserToken;
 
   /** Each successful request or keep alive will refresh this value */
-  private static int sessionTokenLastKeepAliveSentMillis = -1;
+  private static long sessionTokenLastKeepAliveExpirationMillis = -1;
 
   /** Send the keep alive this many milliseconds before the session token expires */
   private static final int BEFORE_EXPIRE_REFRESH_DURATION_MILLIS = 8000;
@@ -41,15 +43,26 @@ public class SessionManager {
   }
 
   /**
-   * Gets the number of milliseconds until the current session has expired. If 0, the session is
-   * expired.
+   * Gets the number of milliseconds until the current session has expired. If 0 or less, the
+   * session is expired.
    *
    * @return number of milliseconds until the current session has expired
    * @since 1.0.0
    */
   private static long millisToSessionExpires() {
-    // TODO: implement
-    return 0;
+    return sessionTokenLastKeepAliveExpirationMillis - System.currentTimeMillis();
+  }
+
+  /**
+   * Set the token expiration time in milliseconds.
+   *
+   * @since 1.0.0
+   */
+  public static void updateTokenExpiration() {
+    long sessionTimeoutMS =
+        SCTimeUnit.SECONDS.toMillis(
+            CanaryConnectorMain.getConnectorConfig().getApiClientTimeoutSeconds());
+    sessionTokenLastKeepAliveExpirationMillis = System.currentTimeMillis() + sessionTimeoutMS;
   }
 
   /**
@@ -62,7 +75,7 @@ public class SessionManager {
     RequestInfo request =
         CanaryApiRequestBuilder.getKeepAliveRequest(
             getCurrentUserToken(), getCurrentSessionToken());
-    // TODO: update sessionTokenLastKeepAliveSentMilli
+    updateTokenExpiration();
     return CanaryApiRequestSender.processRequest(request.url, request.headers, request.body);
   }
 
@@ -85,7 +98,7 @@ public class SessionManager {
    */
   private static boolean getSessionToken() {
     RequestInfo request = CanaryApiRequestBuilder.getSessionTokenRequest(getCurrentUserToken());
-    // TODO: update sessionTokenLastKeepAliveSentMilli
+    updateTokenExpiration();
     return CanaryApiRequestSender.processRequest(request.url, request.headers, request.body);
   }
 
