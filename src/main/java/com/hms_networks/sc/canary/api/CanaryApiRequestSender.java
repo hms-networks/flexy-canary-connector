@@ -59,7 +59,7 @@ public class CanaryApiRequestSender {
    * @return true if the request was successful
    * @since 1.0.0
    */
-  public static String apiRequest(String url, String headers, String body) {
+  private static String apiRequest(String url, String headers, String body) {
     String responseBodyString = "";
 
     try {
