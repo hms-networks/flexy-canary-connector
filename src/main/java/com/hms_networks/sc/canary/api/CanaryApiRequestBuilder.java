@@ -39,6 +39,26 @@ public class CanaryApiRequestBuilder {
   }
 
   /**
+   * Get the request to store data to the api.
+   *
+   * @return the {@link RequestInfo} object containing the keep alive request
+   * @since 1.0.0
+   */
+  public static RequestInfo getStoreDataRequest(String tagData) {
+    String url = getApiBase() + "storeData";
+    String body =
+        "\"userToken\":\""
+            + SessionManager.getCurrentUserToken()
+            + "\",\"sessionToken\":\""
+            + SessionManager.getCurrentSessionToken()
+            + "\","
+            + "\"tvqs\":"
+            + tagData
+            + "}";
+    return new RequestInfo(url, HEADERS, body);
+  }
+
+  /**
    * Get the request to send a keep alive message to the api.
    *
    * @param userToken the user token to send with the request
