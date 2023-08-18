@@ -1,7 +1,9 @@
 package com.hms_networks.sc.canary;
 
+import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
 import com.hms_networks.sc.canary.api.CanaryApiRequestBuilder;
+import com.hms_networks.sc.canary.api.CanaryDataPosterThread;
 import com.hms_networks.sc.canary.api.SessionManager;
 import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorConfig;
 import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorMain;
@@ -52,6 +54,13 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   private CanaryConnectorConfig connectorConfig = null;
+
+  /**
+   * Thread to send data messages to canary
+   *
+   * @since 1.0.0
+   */
+  private CanaryDataPosterThread dataThread = null;
 
   /**
    * Constructor for the Canary Connector main class.
@@ -108,6 +117,8 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    */
   public boolean connectorStartUp() {
     CanaryApiRequestBuilder.setupConfig(connectorConfig);
+    dataThread = new CanaryDataPosterThread();
+    dataThread.start();
 
     // TODO: Implement connector startup steps (return true for now)
     return true;
@@ -151,6 +162,7 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public boolean connectorShutDown() {
+    dataThread.quitLoop();
     // TODO: Implement connector shutdown steps (return true for now)
     return true;
   }
@@ -165,8 +177,15 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public boolean connectorCleanUp() {
-    // TODO: Implement connector cleanup steps (return true for now)
-    return true;
+    boolean cleanupFinished = true;
+    dataThread.stop();
+    try {
+      dataThread.join();
+    } catch (InterruptedException e) {
+      cleanupFinished = false;
+      Logger.LOG_CRITICAL("Unable to stop data poster thread.");
+    }
+    return cleanupFinished;
   }
 
   /**
