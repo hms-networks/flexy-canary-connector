@@ -59,6 +59,14 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
   private static final String CONFIG_FILE_API_RECEIVER_API_VER_NUM_KEY = "ReceiverApiVersionNumber";
 
   /**
+   * The configuration file JSON key for the queue data post rate setting.
+   *
+   * @since 1.0.0
+   */
+  public static final String CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY =
+      "QueueDataPostRateMillis";
+
+  /**
    * Key for the Canary API file size setting in megabytes in the configuration file API object.
    *
    * @since 1.0.0
@@ -181,6 +189,14 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    */
   public static final String DEFAULT_CONFIG_API_URL = "https://<USER-DOMAIN>:PORT_NUM/";
 
+  /**
+   * The default post rate (in milliseconds) of each data post. Changing this will modify the
+   * maximum data post rate interval.
+   *
+   * @since 1.0.0
+   */
+  public static final long DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS = 3000;
+
   // endregion
 
   /**
@@ -220,6 +236,8 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     apiConfigObject.put(CONFIG_FILE_API_FILE_SIZE_KEY, DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB);
     apiConfigObject.put(
         CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY, DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS);
+    apiConfigObject.put(
+        CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY, DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS);
     connectorConfigObject.put(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY, apiConfigObject);
 
     // Create auth configuration object
@@ -344,6 +362,32 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     }
 
     return apiHistorian;
+  }
+
+  /**
+   * Get the queue data post rate in milliseconds from the configuration.
+   *
+   * @return queue data post rate in milliseconds
+   * @throws JSONException if unable to get queue data post rate
+   * @since 1.0.0
+   */
+  public long getQueueDataPostRateMillis() {
+    long queueDataPostRateMillis = DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS;
+
+    try {
+      if (getConnectorConfigurationObject()
+          .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+          .has(CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY)) {
+        queueDataPostRateMillis =
+            getConnectorConfigurationObject()
+                .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+                .getLong(CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY);
+      }
+    } catch (JSONException e) {
+      handleError(e, CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY);
+    }
+
+    return queueDataPostRateMillis;
   }
 
   /**
