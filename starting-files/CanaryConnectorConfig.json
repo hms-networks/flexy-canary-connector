@@ -18,7 +18,8 @@
       "ApiClientId": "<deviceName>",
       "ApiClientTimeoutSeconds": 300,
       "FileSizeMegabytes": 8,
-      "AutoCreateDatasets": true
+      "AutoCreateDatasets": true,
+      "QueueDataPostRateMillis": 3000
     },
     "Auth": {
       "UserName":"<USER-NAME>",
