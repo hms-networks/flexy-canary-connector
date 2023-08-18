@@ -183,4 +183,17 @@ public class AbstractConnectorMainConstants {
   public static final String SCB_ITEM_KEY_SERIAL_NUMBER = "SERNUM";
 
   // endregion
+
+  // region: Data Polling Constants
+
+  /** The minimum memory (in bytes) required to perform a poll of the data queue. */
+  public static final int QUEUE_DATA_POLL_MIN_MEMORY_BYTES = 5000000;
+
+  /** The time (in milliseconds) that the data queue must be behind by before warning the user. */
+  public static final long QUEUE_DATA_POLL_BEHIND_MILLIS_WARN = 300000;
+
+  /** The maximum number of historical data queue poll failures before a reset is triggered. */
+  public static final int QUEUE_DATA_POLL_FAILURE_RESET_THRESHOLD = 5;
+
+  // endregion
 }
