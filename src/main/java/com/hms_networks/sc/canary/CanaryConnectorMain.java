@@ -5,8 +5,11 @@ import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
 import com.hms_networks.sc.canary.api.CanaryApiRequestBuilder;
 import com.hms_networks.sc.canary.api.CanaryDataPosterThread;
 import com.hms_networks.sc.canary.api.SessionManager;
+import com.hms_networks.sc.canary.data.CanaryDataPayloadManager;
 import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorConfig;
 import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorMain;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Main class for the Canary Connector. This class contains a singleton {@link #instance} of the
@@ -74,8 +77,9 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   /**
    * Main method for Canary Connector. The content of this method should not be modified. Instead,
    * use the appropriate method: {@link #connectorInitialize()}, {@link #connectorStartUp()}, {@link
-   * #connectorLoopRun()}, {@link #connectorLoopPollData()}, {@link #connectorShutDown()}, or {@link
-   * #connectorCleanUp()}.
+   * #connectorConfigLoad()}, {@link #connectorLoopRun()}, {@link
+   * #connectorProcessDataPoints(List)}, {@link #connectorProcessAggregatedDataPoints(Map)}, {@link
+   * #connectorShutDown()}, or {@link #connectorCleanUp()}.
    *
    * @param args project arguments
    * @since 1.0.0
@@ -125,17 +129,35 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   }
 
   /**
-   * Performs connector data polling steps. This method is invoked cyclically by the connector main
-   * loop. It is intended to be used for performing any necessary data polling steps, such as
-   * reading the historical data queue, preparing data for transmission, etc.
+   * Performs processing of data points received from the historical data queue during polling. This
+   * method is invoked after data polling has been performed, and data points were successfully
+   * retrieved from the historical data queue. It is intended to be used for performing any
+   * necessary processing steps, such as preparing data for transmission, etc. This method should
+   * return true if data processing was successful, or false otherwise.
    *
-   * <p>Note: This method is only invoked if data polling is enabled (i.e. the connector data
-   * polling disable tag value is 0).
-   *
+   * @param dataPoints the list of data points to process
+   * @return {@code true} if data processing was successful, or {@code false} otherwise
+   * @throws Exception if an exception occurs while processing the data points
    * @since 1.0.0
    */
-  public void connectorLoopPollData() {
-    // TODO: Implement connector data polling steps
+  public boolean connectorProcessDataPoints(List dataPoints) throws Exception {
+    return CanaryDataPayloadManager.addDataPointsList(dataPoints);
+  }
+
+  /**
+   * Performs processing of aggregated data points received from the historical data queue during
+   * polling. This method is invoked after data polling has been performed, and data points were
+   * successfully retrieved from the historical data queue. It is intended to be used for performing
+   * any necessary processing steps, such as preparing data for transmission, etc. This method
+   * should return true if data processing was successful, or false otherwise.
+   *
+   * @param dataPoints the map of aggregated data points to process
+   * @return {@code true} if data processing was successful, or {@code false} otherwise
+   * @throws Exception if an exception occurs while processing the data points
+   * @since 1.0.0
+   */
+  public boolean connectorProcessAggregatedDataPoints(Map dataPoints) throws Exception {
+    return CanaryDataPayloadManager.addDataPointsMap(dataPoints);
   }
 
   /**

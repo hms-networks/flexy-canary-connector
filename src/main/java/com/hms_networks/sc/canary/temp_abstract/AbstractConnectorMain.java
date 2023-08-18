@@ -11,7 +11,11 @@ import com.hms_networks.americas.sc.extensions.system.http.SCHttpUtility;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUnit;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUtils;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Abstract class for the main class of a connector application. This class contains a significant
@@ -133,6 +137,37 @@ public abstract class AbstractConnectorMain {
    * @since 1.0.0
    */
   private TagControl connectorDataPollingDisableTag;
+
+  /**
+   * The connector configuration object used to access the connector configuration file. This object
+   * is loaded during connector initialization and may be used for various purposes, including to
+   * configure the connector application.
+   *
+   * @since 1.0.0
+   */
+  private AbstractConnectorConfig abstractConnectorConfig;
+
+  /**
+   * Integer counter variable for tracking the number of consecutive failures of polling the
+   * historical data queue.
+   *
+   * @since 1.0.0
+   */
+  private static int queuePollFailCount = 0;
+
+  /**
+   * Boolean flag indicating if the application is running out of memory.
+   *
+   * @since 1.0.0
+   */
+  private static boolean isMemoryCurrentlyLow;
+
+  /**
+   * Long value used to track the last time the application checked for historical data update.
+   *
+   * @since 1.0.0
+   */
+  private static long lastUpdateTimestampMillis = 0;
 
   /**
    * Constructor for the abstract connector main class. This constructor is used to set the
@@ -399,18 +434,17 @@ public abstract class AbstractConnectorMain {
     isAppAutoRestartEnabled = SCAppManagement.enableAppAutoRestart();
 
     // Load configuration file
-    AbstractConnectorConfig connectorConfig;
     try {
-      connectorConfig = connectorConfigLoad();
+      abstractConnectorConfig = connectorConfigLoad();
     } catch (Exception e) {
       Logger.LOG_CRITICAL("Failed to load the connector configuration file!");
       Logger.LOG_EXCEPTION(e);
       initializeSuccess = false;
-      connectorConfig = null;
+      abstractConnectorConfig = null;
     }
 
     // Check if configuration file loaded successfully (if initialization has not failed)
-    if (connectorConfig == null && initializeSuccess) {
+    if (abstractConnectorConfig == null && initializeSuccess) {
       Logger.LOG_CRITICAL("Failed to load the connector configuration file!");
       initializeSuccess = false;
     } else if (initializeSuccess) {
@@ -418,7 +452,7 @@ public abstract class AbstractConnectorMain {
       // Load connector log level (default of TRACE, but should never encounter this)
       int connectorLogLevel = Logger.LOG_LEVEL_TRACE;
       try {
-        connectorLogLevel = connectorConfig.getConnectorLogLevel();
+        connectorLogLevel = abstractConnectorConfig.getConnectorLogLevel();
       } catch (Exception e) {
         Logger.LOG_CRITICAL("Unable to load the connector configuration file!");
         Logger.LOG_EXCEPTION(e);
@@ -435,7 +469,7 @@ public abstract class AbstractConnectorMain {
       // Configure queue string history data option
       try {
         HistoricalDataQueueManager.setStringHistoryEnabled(
-            connectorConfig.getQueueDataStringEnabled());
+            abstractConnectorConfig.getQueueDataStringEnabled());
       } catch (Exception e) {
         Logger.LOG_CRITICAL(
             "Failed to configure the queue option for enabling/disabling string history data!");
@@ -446,7 +480,7 @@ public abstract class AbstractConnectorMain {
       // Configure queue data poll size
       try {
         HistoricalDataQueueManager.setQueueFifoTimeSpanMins(
-            connectorConfig.getQueueDataPollSizeMinutes());
+            abstractConnectorConfig.getQueueDataPollSizeMinutes());
       } catch (Exception e) {
         Logger.LOG_CRITICAL(
             "Failed to configure the queue data poll size interval (minutes) option!");
@@ -457,7 +491,7 @@ public abstract class AbstractConnectorMain {
       // Configure queue max fall behind time option
       try {
         long queueDataPollMaxBehindTimeMinutes =
-            connectorConfig.getQueueDataPollMaxBehindTimeMinutes();
+            abstractConnectorConfig.getQueueDataPollMaxBehindTimeMinutes();
         if (queueDataPollMaxBehindTimeMinutes
             == HistoricalDataQueueManager.DISABLED_MAX_HIST_FIFO_GET_BEHIND_MINS) {
           Logger.LOG_WARN("Queue maximum fall behind time (minutes) option is not enabled!");
@@ -479,11 +513,12 @@ public abstract class AbstractConnectorMain {
       try {
         Logger.LOG_CRITICAL(
             "Setting the queue diagnostic tags option to "
-                + connectorConfig.getQueueDiagnosticTagsEnabled()
+                + abstractConnectorConfig.getQueueDiagnosticTagsEnabled()
                 + ".");
         HistoricalDataQueueManager.setEnableDiagnosticTags(
-            connectorConfig.getQueueDiagnosticTagsEnabled(),
-            SCTimeUnit.MINUTES.toSeconds(connectorConfig.getQueueDataPollWarnBehindTimeMinutes()));
+            abstractConnectorConfig.getQueueDiagnosticTagsEnabled(),
+            SCTimeUnit.MINUTES.toSeconds(
+                abstractConnectorConfig.getQueueDataPollWarnBehindTimeMinutes()));
       } catch (Exception e) {
         Logger.LOG_CRITICAL("Failed to configure the queue diagnostic tags enabled option!");
         Logger.LOG_EXCEPTION(e);
@@ -583,6 +618,9 @@ public abstract class AbstractConnectorMain {
       cleanUpSuccess = false;
     }
 
+    // Clear config variable
+    abstractConnectorConfig = null;
+
     // Log clean up status
     if (cleanUpSuccess) {
       Logger.LOG_CRITICAL("Finished cleaning up " + connectorFriendlyName + ".");
@@ -615,6 +653,129 @@ public abstract class AbstractConnectorMain {
     else {
       Logger.LOG_CRITICAL(connectorFriendlyName + " has finished running.");
       SCAppManagement.disableAppAutoRestart();
+    }
+  }
+
+  /**
+   * Method for performing connector application data polling steps. This method is called during
+   * iterations of the main loop, and is used to poll the historical data queue for new data points.
+   * There is no connector-specific implementation for this method. Resulting data points are passed
+   * to the {@link #connectorProcessDataPoints(List)} or {@link
+   * #connectorProcessAggregatedDataPoints(Map)} method based on the configuration of data
+   * aggregation.
+   *
+   * @since 1.0.0
+   */
+  private void pollData() {
+    // Get queue data poll interval (millis) from config
+    long queueDataPollIntervalMillis = abstractConnectorConfig.getQueueDataPollIntervalMillis();
+
+    // Store current timestamp and available memory
+    long currentReadTimestampMillis = System.currentTimeMillis();
+    long availableMemoryBytes = Runtime.getRuntime().freeMemory();
+    if ((currentReadTimestampMillis - lastUpdateTimestampMillis) >= queueDataPollIntervalMillis) {
+
+      // Check if memory is within permissible range to poll data queue
+      if (availableMemoryBytes < AbstractConnectorMainConstants.QUEUE_DATA_POLL_MIN_MEMORY_BYTES) {
+        // Show low memory warning
+        Logger.LOG_WARN("Low memory on device, " + (availableMemoryBytes / 1000) + " MB left!");
+
+        // If low memory flag not set, set it and request garbage collection
+        if (!isMemoryCurrentlyLow) {
+          // Set low memory flag
+          isMemoryCurrentlyLow = true;
+
+          // Tell the JVM that it should garbage collect soon
+          System.gc();
+        }
+      } else {
+        // There is enough memory to run, reset memory state variable.
+        if (isMemoryCurrentlyLow) {
+          isMemoryCurrentlyLow = false;
+        }
+
+        // Get aggregation configuration
+        // TODO: Implement config object and better exception handling in class level
+        SCTimeSpan dataAggregationTimeSpan = new SCTimeSpan(5, SCTimeUnit.SECONDS);
+
+        // Retrieve data from queue (if required)
+        try {
+          // Check if a new time tracker should be started
+          final boolean startNewTimeTracker;
+          if (HistoricalDataQueueManager.doesTimeTrackerExist()
+              && queuePollFailCount
+                  < AbstractConnectorMainConstants.QUEUE_DATA_POLL_FAILURE_RESET_THRESHOLD) {
+            startNewTimeTracker = false;
+          } else {
+            if (queuePollFailCount
+                >= AbstractConnectorMainConstants.QUEUE_DATA_POLL_FAILURE_RESET_THRESHOLD) {
+              Logger.LOG_WARN(
+                  "The maximum number of failures to read the historical "
+                      + "data queue has been reached ("
+                      + AbstractConnectorMainConstants.QUEUE_DATA_POLL_FAILURE_RESET_THRESHOLD
+                      + "). Forcing a new queue time tracker!");
+            }
+            startNewTimeTracker = true;
+          }
+
+          // Read data points from queue
+          int numDatapointsReadFromQueue;
+          ArrayList datapointsReadFromQueueList = null;
+          Map datapointsReadFromQueueMap = null;
+          if (dataAggregationTimeSpan == null) {
+            datapointsReadFromQueueList =
+                HistoricalDataQueueManager.getFifoNextSpanDataAllGroups(startNewTimeTracker);
+            numDatapointsReadFromQueue = datapointsReadFromQueueList.size();
+          } else {
+            datapointsReadFromQueueMap =
+                HistoricalDataQueueManager.getFifoNextSpanDataAllGroups(
+                    startNewTimeTracker, dataAggregationTimeSpan);
+            numDatapointsReadFromQueue = datapointsReadFromQueueMap.size();
+          }
+
+          Logger.LOG_DEBUG(
+              "Read " + numDatapointsReadFromQueue + " data points from the historical log.");
+
+          // Reset failure counter
+          queuePollFailCount = 0;
+
+          // Check if queue is behind
+          try {
+            long queueBehindMillis = HistoricalDataQueueManager.getQueueTimeBehindMillis();
+            if (queueBehindMillis
+                >= AbstractConnectorMainConstants.QUEUE_DATA_POLL_BEHIND_MILLIS_WARN) {
+              Logger.LOG_WARN(
+                  "The historical data queue is running behind by "
+                      + SCTimeUtils.getDayHourMinSecsForMillis((int) queueBehindMillis));
+            }
+
+          } catch (IOException e) {
+            Logger.LOG_SERIOUS("Unable to detect if historical data queue is running behind.");
+            Logger.LOG_EXCEPTION(e);
+          }
+
+          // Process data points
+          boolean processDataPointsSuccess = false;
+          if (datapointsReadFromQueueList != null) {
+            processDataPointsSuccess = connectorProcessDataPoints(datapointsReadFromQueueList);
+          } else if (datapointsReadFromQueueMap != null) {
+            processDataPointsSuccess =
+                connectorProcessAggregatedDataPoints(datapointsReadFromQueueMap);
+          }
+
+          // Update last update timestamp if data points were processed successfully
+          if (processDataPointsSuccess) {
+            lastUpdateTimestampMillis = currentReadTimestampMillis;
+          }
+        } catch (Exception e) {
+          Logger.LOG_CRITICAL(
+              "An error occurred while reading "
+                  + "data from the historical log. (#"
+                  + ++queuePollFailCount
+                  + ")");
+          Logger.LOG_EXCEPTION(e);
+        }
+      }
     }
   }
 
@@ -660,7 +821,7 @@ public abstract class AbstractConnectorMain {
         if (isDataPollingDisabled) {
           Logger.LOG_DEBUG("Data polling is disabled and has been skipped.");
         } else {
-          connectorLoopPollData();
+          pollData();
         }
 
         // Invoke connector main loop
@@ -706,16 +867,32 @@ public abstract class AbstractConnectorMain {
   public abstract boolean connectorStartUp();
 
   /**
-   * Performs connector data polling steps. This method is invoked cyclically by the connector main
-   * loop. It is intended to be used for performing any necessary data polling steps, such as
-   * reading the historical data queue, preparing data for transmission, etc.
+   * Performs processing of data points received from the historical data queue during polling. This
+   * method is invoked after data polling has been performed, and data points were successfully
+   * retrieved from the historical data queue. It is intended to be used for performing any
+   * necessary processing steps, such as preparing data for transmission, etc. This method should
+   * return true if data processing was successful, or false otherwise.
    *
-   * <p>Note: This method is only invoked if data polling is enabled (i.e. the connector data
-   * polling disable tag value is 0).
-   *
+   * @param dataPoints the list of data points to process
+   * @return {@code true} if data processing was successful, or {@code false} otherwise
+   * @throws Exception if an exception occurs while processing the data points
    * @since 1.0.0
    */
-  public abstract void connectorLoopPollData();
+  public abstract boolean connectorProcessDataPoints(List dataPoints) throws Exception;
+
+  /**
+   * Performs processing of aggregated data points received from the historical data queue during
+   * polling. This method is invoked after data polling has been performed, and data points were
+   * successfully retrieved from the historical data queue. It is intended to be used for performing
+   * any necessary processing steps, such as preparing data for transmission, etc. This method
+   * should return true if data processing was successful, or false otherwise.
+   *
+   * @param dataPoints the map of aggregated data points to process
+   * @return {@code true} if data processing was successful, or {@code false} otherwise
+   * @throws Exception if an exception occurs while processing the data points
+   * @since 1.0.0
+   */
+  public abstract boolean connectorProcessAggregatedDataPoints(Map dataPoints) throws Exception;
 
   /**
    * Performs connector main loop steps. This method is invoked cyclically by the connector main
