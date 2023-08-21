@@ -115,6 +115,7 @@ public class CanaryApiRequestSender {
    * @param response JSON to read in and parse
    * @return true if the response indicates success
    * @throws JSONException on errors reading the JSON object
+   * @since 1.0.0
    */
   private static boolean checkGenericResponseJson(JSONObject response) throws JSONException {
     final String RESPONSE_STATUS_JSON_FIELD_NAME = "statusCode";
@@ -154,6 +155,7 @@ public class CanaryApiRequestSender {
    * @param response JSON to read in and parse
    * @return true if the response indicates success
    * @throws JSONException on errors reading the JSON object
+   * @since 1.0.0
    */
   private static boolean checkUserTokenResponseJson(JSONObject response) throws JSONException {
     boolean messageSuccessful = false;
@@ -174,6 +176,7 @@ public class CanaryApiRequestSender {
    * @param response JSON to read in and parse
    * @return true if the response indicates success
    * @throws JSONException on errors reading the JSON object
+   * @since 1.0.0
    */
   private static boolean checkSessionTokenResponseJson(JSONObject response) throws JSONException {
     boolean messageSuccessful = false;
