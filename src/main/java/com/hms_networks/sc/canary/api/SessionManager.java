@@ -71,12 +71,12 @@ public class SessionManager {
    * @return true if the keep alive request was sent successfully
    * @since 1.0.0
    */
-  private static boolean sendKeepAlive() {
+  private static RequestInfo sendKeepAlive() {
     RequestInfo request =
         CanaryApiRequestBuilder.getKeepAliveRequest(
             getCurrentUserToken(), getCurrentSessionToken());
     updateTokenExpiration();
-    return CanaryApiRequestSender.processRequest(request.url, request.headers, request.body);
+    return CanaryApiRequestSender.processRequest(request);
   }
 
   /**
@@ -85,9 +85,9 @@ public class SessionManager {
    * @return the user token from the Canary API
    * @since 1.0.0
    */
-  private static boolean getUserToken() {
+  private static RequestInfo getUserToken() {
     RequestInfo request = CanaryApiRequestBuilder.getUserTokenRequest();
-    return CanaryApiRequestSender.processRequest(request.url, request.headers, request.body);
+    return CanaryApiRequestSender.processRequest(request);
   }
 
   /**
@@ -96,10 +96,10 @@ public class SessionManager {
    * @return the session token from the Canary API
    * @since 1.0.0
    */
-  private static boolean getSessionToken() {
+  private static RequestInfo getSessionToken() {
     RequestInfo request = CanaryApiRequestBuilder.getSessionTokenRequest(getCurrentUserToken());
     updateTokenExpiration();
-    return CanaryApiRequestSender.processRequest(request.url, request.headers, request.body);
+    return CanaryApiRequestSender.processRequest(request);
   }
 
   /**
