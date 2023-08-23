@@ -43,6 +43,16 @@ public class SessionManager {
   }
 
   /**
+   * This method should be called to revoke the Canary API tokens when shutting down the connector.
+   *
+   * @since 1.0.0
+   */
+  public static void revokeTokens() {
+    revokeSessionToken();
+    revokeUserToken();
+  }
+
+  /**
    * Gets the number of milliseconds until the current session has expired. If 0 or less, the
    * session is expired.
    *
@@ -99,6 +109,27 @@ public class SessionManager {
   private static RequestInfo getSessionToken() {
     RequestInfo request = CanaryApiRequestBuilder.getSessionTokenRequest(getCurrentUserToken());
     updateTokenExpiration();
+    return CanaryApiRequestSender.processRequest(request);
+  }
+
+  /**
+   * Revoke the user token from the Canary API.
+   *
+   * @since 1.0.0
+   */
+  private static RequestInfo revokeUserToken() {
+    RequestInfo request = CanaryApiRequestBuilder.getRevokeUserTokenRequest(currentUserToken);
+    return CanaryApiRequestSender.processRequest(request);
+  }
+
+  /**
+   * Revoke the session token from the Canary API.
+   *
+   * @since 1.0.0
+   */
+  private static RequestInfo revokeSessionToken() {
+    RequestInfo request =
+        CanaryApiRequestBuilder.getRevokeSessionTokenRequest(currentUserToken, currentSessionToken);
     return CanaryApiRequestSender.processRequest(request);
   }
 
