@@ -141,9 +141,11 @@ public class CanaryApiRequestSender {
     if (response.has(ERROR_JSON_FIELD_NAME)) {
       messageSuccessful = false;
       JSONArray responseErrors = response.getJSONArray(ERROR_JSON_FIELD_NAME);
-      Logger.LOG_INFO("There were " + responseErrors.length() + " errors found.");
-      for (int i = 0; i < responseErrors.length(); i++) {
-        Logger.LOG_CRITICAL("API error: " + responseErrors.getString(i));
+      if (responseErrors.length() > 0) {
+        Logger.LOG_INFO("There were " + responseErrors.length() + " errors found.");
+        for (int i = 0; i < responseErrors.length(); i++) {
+          Logger.LOG_CRITICAL("API error: " + responseErrors.getString(i));
+        }
       }
     }
     return messageSuccessful;
