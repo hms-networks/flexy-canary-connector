@@ -209,14 +209,12 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   public AbstractConnectorConfig connectorConfigLoad() throws Exception {
     connectorConfig = new CanaryConnectorConfig();
 
-    // Check for missing fields
-    boolean configLoadSuccess = true;
-    if (connectorConfig.getApiUrl().equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_URL)) {
-      configLoadSuccess = false;
-    }
+    boolean configLoadSuccess = connectorConfig.checkCriticalConfigLoaded();
 
     // Handle missing fields
     if (!configLoadSuccess) {
+      Logger.LOG_CRITICAL(
+          "Critical configuration item(s) are missing. The connector will shutdown.");
       // TODO: Implement HTTP API listener to wait and get values
     }
 
