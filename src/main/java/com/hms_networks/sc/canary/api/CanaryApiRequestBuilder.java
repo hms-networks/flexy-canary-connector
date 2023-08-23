@@ -81,6 +81,41 @@ public class CanaryApiRequestBuilder {
   }
 
   /**
+   * Get the request to revoke a session token for the api.
+   *
+   * @param userToken the user token to send with the request
+   * @param sessionToken the session token to send with the request
+   * @return the {@link RequestInfo} object containing the keep alive request
+   * @since 1.0.0
+   */
+  public static RequestInfo getRevokeSessionTokenRequest(String userToken, String sessionToken) {
+    String url = getApiBase() + "revokeSessionToken";
+    String body =
+        "{  "
+            + "\"userToken\":\""
+            + userToken
+            + "\",\n"
+            + "\"sessionToken\":\""
+            + sessionToken
+            + "\","
+            + "}";
+    return new RequestInfo(url, HEADERS, body);
+  }
+
+  /**
+   * Get the request to revoke a user token for the api.
+   *
+   * @param userToken the user token to send with the request
+   * @return the {@link RequestInfo} object containing the keep alive request
+   * @since 1.0.0
+   */
+  public static RequestInfo getRevokeUserTokenRequest(String userToken) {
+    String url = getApiBase() + "revokeUserToken";
+    String body = "{  " + "\"userToken\":\"" + userToken + "\"}";
+    return new RequestInfo(url, HEADERS, body);
+  }
+
+  /**
    * Get the request to send a user token request to the api.
    *
    * @return the {@link RequestInfo} object containing the user token request

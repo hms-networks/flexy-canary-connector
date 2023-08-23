@@ -163,7 +163,7 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    */
   public boolean connectorShutDown() {
     dataThread.quitLoop();
-    // TODO: Implement connector shutdown steps (return true for now)
+    SessionManager.revokeTokens();
     return true;
   }
 
