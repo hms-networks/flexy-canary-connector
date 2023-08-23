@@ -269,9 +269,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
                 .getString(CONFIG_FILE_API_URL_KEY);
       }
     } catch (JSONException e) {
-      handleError(e, CONFIG_FILE_API_URL_KEY);
-      Logger.LOG_CRITICAL("This setting is required to run the connector.");
-      // TODO: critical error handling
+      handleCriticalError(e, CONFIG_FILE_API_URL_KEY);
     }
 
     return apiUrl;
@@ -301,7 +299,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
       /* The connector will work if http anonymous requests are in use
       as long as there is an empty json object in the request body. Values
       are ignored. */
-      handleError(e, CONFIG_FILE_AUTH_USERNAME_KEY);
+      handleCriticalError(e, CONFIG_FILE_AUTH_USERNAME_KEY);
     }
 
     return apiUsername;
@@ -332,7 +330,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
       /* The connector will work if http anonymous requests are in use
       as long as there is an empty json object in the request body. Values
       are ignored. */
-      handleError(e, CONFIG_FILE_AUTH_PASSWORD_KEY);
+      handleCriticalError(e, CONFIG_FILE_AUTH_PASSWORD_KEY);
     }
 
     return apiUserPassword;
@@ -508,5 +506,41 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             + problemItem
             + " from the connector configuration file.");
     Logger.LOG_EXCEPTION(e);
+  }
+
+  /**
+   * Critical error handling for the class functions.
+   *
+   * @param e the exception to handle
+   * @param problemItem the JSON API key that was unable to be retrieved
+   * @since 1.0.0
+   */
+  private static void handleCriticalError(JSONException e, String problemItem) {
+    Logger.LOG_CRITICAL(
+        "There was an error retrieving the "
+            + problemItem
+            + " from the connector configuration file.");
+    Logger.LOG_EXCEPTION(e);
+  }
+
+  /**
+   * Ensure each required configuration option has been set to something other than the default.
+   *
+   * @return true if all required config options have been set
+   */
+  public boolean checkCriticalConfigLoaded() {
+    boolean allLoaded = true;
+    CanaryConnectorConfig connectorConfig = CanaryConnectorMain.getConnectorConfig();
+
+    if (connectorConfig.getApiUrl().equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_URL)
+        || connectorConfig
+            .getApiUsername()
+            .equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_USERNAME)
+        || connectorConfig
+            .getApiUserPassword()
+            .equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_PASSWORD)) {
+      allLoaded = false;
+    }
+    return allLoaded;
   }
 }
