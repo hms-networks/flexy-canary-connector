@@ -1,7 +1,5 @@
 package com.hms_networks.sc.canary.temp_abstract;
 
-import com.hms_networks.sc.canary.api.CanaryApiResponseStatus;
-
 /**
  * Class to hold request information when creating HTTP(S) requests.
  *
@@ -12,14 +10,6 @@ public class RequestInfo {
 
   /** API request url */
   private String url;
-
-  /**
-   * The {@link CanaryApiResponseStatus} object representing the state of the request's response
-   * status.
-   *
-   * @since 1.0.0
-   */
-  private CanaryApiResponseStatus status;
 
   /**
    * Tracker for the number of times a request has failed.
@@ -56,25 +46,6 @@ public class RequestInfo {
    */
   public int getFailRequestCounter() {
     return failRequestCounter;
-  }
-
-  /**
-   * Gets the status of the request object.
-   *
-   * @return the status of the request object.
-   * @since 1.0.0
-   */
-  public CanaryApiResponseStatus getStatus() {
-    return status;
-  }
-
-  /**
-   * Set the status of the request object.
-   *
-   * @since 1.0.0
-   */
-  public void setStatus(CanaryApiResponseStatus status) {
-    this.status = status;
   }
 
   /**

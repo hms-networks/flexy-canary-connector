@@ -26,10 +26,10 @@ public class CanaryApiRequestSender {
    * Send and parse an API POST request with the given information.
    *
    * @param request the {@link RequestInfo} to hold all request information
-   * @return true if the request was successful
+   * @return the status of the request
    * @since 1.0.0
    */
-  public static RequestInfo processRequest(RequestInfo request) {
+  public static CanaryApiResponseStatus processRequest(RequestInfo request) {
     CanaryApiResponseStatus status;
     String responseBodyString = apiRequest(request);
 
@@ -43,9 +43,8 @@ public class CanaryApiRequestSender {
       responseBodyString = apiRequest(request);
       status = handleResponseBodyString(responseBodyString, request.getUrl());
     }
-    request.setStatus(status);
 
-    return request;
+    return status;
   }
 
   /**
