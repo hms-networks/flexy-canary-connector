@@ -253,7 +253,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * Get the API URL from the configuration. The port number should be specified.
    *
    * @return API URL
-   * @throws JSONException if unable to get the API version number from the configuration file
    * @since 1.0.0
    */
   public String getApiUrl() {
@@ -280,7 +279,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * HTTPS.
    *
    * @return API URL
-   * @throws JSONException if unable to get the API version number from the configuration file
    * @since 1.0.0
    */
   public String getApiUsername() {
@@ -310,7 +308,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * for HTTPS.
    *
    * @return API URL
-   * @throws JSONException if unable to get the API version number from the configuration file
    * @since 1.0.0
    */
   public String getApiUserPassword() {
@@ -340,7 +337,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * Get the API historian name from the configuration.
    *
    * @return API historian name
-   * @throws JSONException if unable to get the API historian name from the configuration file
    * @since 1.0.0
    */
   public String getApiHistorianServerName() {
@@ -366,7 +362,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * Get the queue data post rate in milliseconds from the configuration.
    *
    * @return queue data post rate in milliseconds
-   * @throws JSONException if unable to get queue data post rate
    * @since 1.0.0
    */
   public long getQueueDataPostRateMillis() {
@@ -392,7 +387,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * Get the sender API version number from the configuration.
    *
    * @return sender API version number
-   * @throws JSONException if unable to get the API version number from the configuration file
    * @since 1.0.0
    */
   public String getSenderApiVersion() {
@@ -419,7 +413,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * Get the API client timeout (in seconds) from the configuration.
    *
    * @return API client timeout (in seconds)
-   * @throws JSONException if unable to get the API client timeout from the configuration file
    * @since 1.0.0
    */
   public int getApiClientTimeoutSeconds() {
@@ -445,7 +438,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * Get the API client file size from the configuration.
    *
    * @return API client file size
-   * @throws JSONException if unable to get the API version number from the configuration file
    * @since 1.0.0
    */
   public int getApiClientFileSize() {
@@ -471,7 +463,6 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * Get the sender API version number from the configuration.
    *
    * @return sender API version number
-   * @throws JSONException if unable to get the API version number from the configuration file
    * @since 1.0.0
    */
   public boolean getApiClientAutoCreateDatasets() {
