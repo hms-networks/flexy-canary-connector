@@ -34,16 +34,16 @@ public class CanaryApiRequestSender {
     String responseBodyString = apiRequest(request);
 
     // Parse response body for useful information
-    status = handleResponseBodyString(responseBodyString, request.url);
+    status = handleResponseBodyString(responseBodyString, request.getUrl());
 
     // Try a bad request once more after issue resolution attempts have been made
-    if (status.getStatus() != CanaryApiResponseStatus.GOOD_REQUEST) {
-      Logger.LOG_WARN("Request was not successful, retrying.");
+    if (status != CanaryApiResponseStatus.GOOD_REQUEST) {
       request.incrementFailRequestCounter();
+      Logger.LOG_WARN("Request was not successful, retrying.");
       responseBodyString = apiRequest(request);
-      status = handleResponseBodyString(responseBodyString, request.url);
+      status = handleResponseBodyString(responseBodyString, request.getUrl());
     }
-    request.status = status;
+    request.setStatus(status);
 
     return request;
   }
@@ -57,7 +57,7 @@ public class CanaryApiRequestSender {
    */
   private static CanaryApiResponseStatus handleResponseBodyString(
       String responseBodyString, String url) {
-    CanaryApiResponseStatus status = new CanaryApiResponseStatus();
+    CanaryApiResponseStatus status = CanaryApiResponseStatus.UNUSED_STATUS;
     try {
       if (!responseBodyString.equals("")) {
         JSONTokener jsonTokener = new JSONTokener(responseBodyString);
@@ -81,10 +81,10 @@ public class CanaryApiRequestSender {
    */
   private static String apiRequest(RequestInfo request) {
     String responseBodyString = "";
-    String url = request.url;
+    String url = request.getUrl();
 
     try {
-      responseBodyString = SCHttpUtility.httpPost(url, request.headers, request.body);
+      responseBodyString = SCHttpUtility.httpPost(url, request.getHeaders(), request.getBody());
       Logger.LOG_INFO(responseBodyString);
     } catch (EWException e) {
       requestHttpsError(e, "Ewon exception during HTTP request to" + url + ".");
@@ -123,7 +123,7 @@ public class CanaryApiRequestSender {
       processResponseStatus(messageStatus);
 
     } catch (Exception e) {
-      messageStatus.setUnknownStatus();
+      messageStatus = CanaryApiResponseStatus.UNKNOWN_STATUS;
       Logger.LOG_SERIOUS(
           "An error occurred while parsing the response for request: " + connectionUrl);
       Logger.LOG_EXCEPTION(e);
@@ -137,12 +137,12 @@ public class CanaryApiRequestSender {
    * @param status the {@link CanaryApiResponseStatus} object representing API response status
    */
   private static void processResponseStatus(CanaryApiResponseStatus status) {
-    if (status.getStatus() == CanaryApiResponseStatus.UNKNOWN_STATUS) {
+    if (status == CanaryApiResponseStatus.UNKNOWN_STATUS) {
       Logger.LOG_CRITICAL("Unknown error detected. Request will be resent.");
-    } else if (status.getStatus() == CanaryApiResponseStatus.BAD_TOKENS) {
+    } else if (status == CanaryApiResponseStatus.BAD_TOKENS) {
       Logger.LOG_DEBUG("API Session tokens expired, refreshing session tokens.");
       SessionManager.refreshSessionTokens();
-    } else if (status.getStatus() == CanaryApiResponseStatus.UNKNOWN_ERROR) {
+    } else if (status == CanaryApiResponseStatus.UNKNOWN_ERROR) {
       Logger.LOG_CRITICAL("API error detected. Please inspect the logs for further details.");
     }
   }
@@ -163,16 +163,7 @@ public class CanaryApiRequestSender {
     // Check for message status
     if (response.has(RESPONSE_STATUS_JSON_FIELD_NAME)) {
       String statusString = response.getString(RESPONSE_STATUS_JSON_FIELD_NAME);
-      if (statusString.equals("Good")) {
-        status.setGoodRequestStatus();
-      } else if (statusString.equals("BadUserToken")) {
-        status.setBadTokenStatus();
-        Logger.LOG_WARN("Bad user token encountered.");
-      } else {
-        status.setUnknownStatus();
-        Logger.LOG_INFO("Unknown status code encountered. Status: " + statusString);
-      }
-
+      status = CanaryApiResponseStatus.getStatusFromString(statusString);
       Logger.LOG_DEBUG("Response status: " + statusString);
     }
 
@@ -180,7 +171,7 @@ public class CanaryApiRequestSender {
     if (response.has(ERROR_JSON_FIELD_NAME)) {
       JSONArray responseErrors = response.getJSONArray(ERROR_JSON_FIELD_NAME);
       if (responseErrors.length() > 0) {
-        status.setUnknownErrorStatus();
+        status = CanaryApiResponseStatus.UNKNOWN_ERROR;
         Logger.LOG_INFO("There were " + responseErrors.length() + " errors found.");
         for (int i = 0; i < responseErrors.length(); i++) {
           Logger.LOG_CRITICAL("API error: " + responseErrors.getString(i));
@@ -206,7 +197,7 @@ public class CanaryApiRequestSender {
     if (response.has(USER_TOKEN_JSON_FIELD_NAME)) {
       String userToken = response.getString(USER_TOKEN_JSON_FIELD_NAME);
       SessionManager.setCurrentUserToken(userToken);
-      status.setGoodRequestStatus();
+      status = CanaryApiResponseStatus.GOOD_REQUEST;
     }
     return status;
   }
@@ -227,7 +218,7 @@ public class CanaryApiRequestSender {
     if (response.has(SESSION_TOKEN_JSON_FIELD_NAME)) {
       String sessionToken = response.getString(SESSION_TOKEN_JSON_FIELD_NAME);
       SessionManager.setCurrentSessionToken(sessionToken);
-      status.setGoodRequestStatus();
+      status = CanaryApiResponseStatus.GOOD_REQUEST;
     }
     return status;
   }
