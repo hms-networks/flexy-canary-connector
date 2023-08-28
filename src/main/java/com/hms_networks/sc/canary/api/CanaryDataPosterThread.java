@@ -37,7 +37,7 @@ public class CanaryDataPosterThread extends Thread {
         RequestInfo request = CanaryApiRequestBuilder.getStoreDataRequest(payload);
         request = CanaryApiRequestSender.processRequest(request);
 
-        if (request.status.getStatus() != CanaryApiResponseStatus.GOOD_REQUEST) {
+        if (request.getStatus() != CanaryApiResponseStatus.GOOD_REQUEST) {
           Logger.LOG_WARN("Unable to send payload to Canary");
         } else {
           SessionManager.updateTokenExpiration();
