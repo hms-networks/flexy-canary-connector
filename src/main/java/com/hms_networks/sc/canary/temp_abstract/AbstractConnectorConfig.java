@@ -442,6 +442,76 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
   }
 
   /**
+   * Logs a missing field in the configuration file along with the default value that will be used.
+   *
+   * @param missingKey the JSON key of the field that was missing/could not be found
+   * @param defaultValue the default value that will be used
+   * @since 1.0.0
+   */
+  protected void logMissingField(String missingKey, String defaultValue) {
+    Logger.LOG_WARN(
+        "The "
+            + missingKey
+            + " option was not found in the configuration file. Using default value of "
+            + defaultValue
+            + ".");
+  }
+
+  /**
+   * Logs a missing field in the configuration file.
+   *
+   * @param missingKey the JSON key of the field that was missing/could not be found
+   * @since 1.0.0
+   */
+  protected void logMissingField(String missingKey) {
+    Logger.LOG_WARN("The " + missingKey + " option was not found in the configuration file.");
+  }
+
+  /**
+   * Logs a failed field in the configuration file and the exception which caused the failure, along
+   * with the default value that will be used.
+   *
+   * @param failedKey the JSON key of the 'failed' field that was unable to be accessed, read, or
+   *     parsed
+   * @param defaultValue the default value that will be used
+   * @param exception the exception that caused the failure
+   * @since 1.0.0
+   */
+  protected void logFailedField(String failedKey, String defaultValue, Exception exception) {
+    Logger.LOG_CRITICAL(
+        "The "
+            + failedKey
+            + " option could not be read from the configuration file due to an error. Using default"
+            + " value of "
+            + defaultValue
+            + ". Check that the configured value is valid and that the configuration file has been"
+            + " saved to the correct location: "
+            + getConfigFilePath()
+            + ".");
+    Logger.LOG_EXCEPTION(exception);
+  }
+
+  /**
+   * Logs a failed field in the configuration file and the exception which caused the failure.
+   *
+   * @param failedKey the JSON key of the 'failed' field that was unable to be accessed, read, or
+   *     parsed
+   * @param exception the exception that caused the failure
+   * @since 1.0.0
+   */
+  protected void logFailedField(String failedKey, Exception exception) {
+    Logger.LOG_CRITICAL(
+        "The "
+            + failedKey
+            + " option could not be read from the configuration file due to an error. "
+            + "Check that the configured value is valid and that the configuration file has been"
+            + " saved to the correct location: "
+            + getConfigFilePath()
+            + ".");
+    Logger.LOG_EXCEPTION(exception);
+  }
+
+  /**
    * Gets the default configuration object for the connector. This is used to populate the
    * configuration file with default values if the file does not exist.
    *
