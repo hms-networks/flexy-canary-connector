@@ -4,3 +4,33 @@ title: Quick Start Guide
 sidebar_label: Quick Start Guide
 toc_max_heading_level: 2
 ---
+
+import ScDocusaurusConfig from "@site/ScDocusaurusConfig.js";
+import DownloadPartial from './_partial/_download.mdx';
+import CanarySetupPartial from './_partial/_canary_setup.mdx';
+import ConfigurationPartial from './_partial/_configuration.mdx';
+
+## Overview
+
+<>This document (quick start guide) will walk you through the steps to install and configure the
+{ScDocusaurusConfig.title} connector.</>
+
+## Download
+
+<DownloadPartial />
+
+## Initial Configuration
+
+### A. Configure Canary Sender API
+
+The following steps are required for a new installation of the connector or an upgrade to a newer version.
+
+<CanarySetupPartial />
+
+### B. Configure Ewon
+
+The following steps are only required for a new installation of the connector.
+
+If you have not already done so, follow the steps [above](#a-configure-canary-sender-api) to setup the Canary sender service.
+
+<ConfigurationPartial />
