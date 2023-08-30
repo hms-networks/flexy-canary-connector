@@ -1,0 +1,26 @@
+import GreenCheckMark from '@site/static/img/green-check-icon-cc0v1.webp';
+import CanarySetupGif from '@site/static/img/setup/canary-setup.gif';
+import ScDocusaurusConfig from "@site/ScDocusaurusConfig.js";
+
+### Enable HTTPS in Canary Sender
+
+Follow the steps shown in the below animation:
+<img src={CanarySetupGif} alt="Canary Setup" width="800"/>
+
+1. Open the Canary Admin application.
+1. Open the Sender tile.
+1. In the bottom left, navigate to the configuration section.
+1. Enable the HTTPS Web API endpoints at either the port of your choosing or the default port of 55254.
+1. Click 'apply' to apply the configuration changes.
+
+:::note
+
+<>While not recommended, the {ScDocusaurusConfig.title} will work with anonymous authentication.
+If anonymous authentication is chosen, a non-default username and password are still expected in the connector configuration but will be ignored.
+</>
+
+:::
+
+Once changes have been saved, you may proceed to the [next section](quick-start-guide#b-configure-ewon)
+
+<img src={GreenCheckMark} alt="Green completion checkmark" width="100"/>
