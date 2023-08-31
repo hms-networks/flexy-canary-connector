@@ -16,6 +16,35 @@ import java.io.File;
  */
 public class AbstractConnectorMainConstants {
 
+  // region: General Constants
+
+  /**
+   * The HTTP connection timeout time in seconds. This value affects the Ewon's global HTTP
+   * timeouts.
+   */
+  public static final String HTTP_TIMEOUT_SECONDS_STRING = "10";
+
+  /** Application watchdog timeout */
+  public static final int APP_WATCHDOG_TIMEOUT_MIN = 5;
+
+  /** The Ewon SCB (System Control Block) key for accessing the serial number of the Ewon. */
+  public static final String SCB_ITEM_KEY_SERIAL_NUMBER = "SERNUM";
+
+  // endregion
+
+  // region: Data Polling Constants
+
+  /** The minimum memory (in bytes) required to perform a poll of the data queue. */
+  public static final int QUEUE_DATA_POLL_MIN_MEMORY_BYTES = 5000000;
+
+  /** The time (in milliseconds) that the data queue must be behind by before warning the user. */
+  public static final long QUEUE_DATA_POLL_BEHIND_MILLIS_WARN = 300000;
+
+  /** The maximum number of historical data queue poll failures before a reset is triggered. */
+  public static final int QUEUE_DATA_POLL_FAILURE_RESET_THRESHOLD = 5;
+
+  // endregion
+
   // region: Control Tag Constants
 
   /** The name of the tag that is used to halt the connector execution. */
@@ -165,35 +194,6 @@ public class AbstractConnectorMainConstants {
           + File.separator
           + CONFIG_FILE_PATH_DEFAULT_NAME
           + CONFIG_FILE_PATH_DEFAULT_EXTENSION;
-
-  // endregion
-
-  // region: General Constants
-
-  /**
-   * The HTTP connection timeout time in seconds. This value affects the Ewon's global HTTP
-   * timeouts.
-   */
-  public static final String HTTP_TIMEOUT_SECONDS_STRING = "10";
-
-  /** Application watchdog timeout */
-  public static final int APP_WATCHDOG_TIMEOUT_MIN = 5;
-
-  /** The Ewon SCB (System Control Block) key for accessing the serial number of the Ewon. */
-  public static final String SCB_ITEM_KEY_SERIAL_NUMBER = "SERNUM";
-
-  // endregion
-
-  // region: Data Polling Constants
-
-  /** The minimum memory (in bytes) required to perform a poll of the data queue. */
-  public static final int QUEUE_DATA_POLL_MIN_MEMORY_BYTES = 5000000;
-
-  /** The time (in milliseconds) that the data queue must be behind by before warning the user. */
-  public static final long QUEUE_DATA_POLL_BEHIND_MILLIS_WARN = 300000;
-
-  /** The maximum number of historical data queue poll failures before a reset is triggered. */
-  public static final int QUEUE_DATA_POLL_FAILURE_RESET_THRESHOLD = 5;
 
   // endregion
 }
