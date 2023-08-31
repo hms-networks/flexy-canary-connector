@@ -256,7 +256,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * @since 1.0.0
    */
   public String getApiUrl() {
-    String apiUrl = null;
+    String apiUrl = DEFAULT_CONFIG_API_URL;
 
     try {
       if (getConnectorConfigurationObject()
