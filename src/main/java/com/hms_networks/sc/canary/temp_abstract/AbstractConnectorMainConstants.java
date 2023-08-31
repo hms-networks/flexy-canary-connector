@@ -43,6 +43,9 @@ public class AbstractConnectorMainConstants {
   /** The maximum number of historical data queue poll failures before a reset is triggered. */
   public static final int QUEUE_DATA_POLL_FAILURE_RESET_THRESHOLD = 5;
 
+  /** The data aggregation period value which indicates that data aggregation is disabled. */
+  public static final long QUEUE_DATA_AGGREGATION_PERIOD_SECS_DISABLED = -1;
+
   // endregion
 
   // region: Control Tag Constants
@@ -111,6 +114,10 @@ public class AbstractConnectorMainConstants {
   public static final String CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_KEY =
       "QueueDataPollIntervalMillis";
 
+  /** Key for accessing the 'QueueDataAggregationPeriodSecs' object in the configuration file. */
+  public static final String CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_KEY =
+      "QueueDataAggregationPeriodSecs";
+
   /** The configuration file JSON key for the enable queue diagnostic tags setting. */
   public static final String CONFIG_FILE_ENABLE_QUEUE_DIAGNOSTIC_TAGS_KEY =
       "QueueEnableDiagnosticTags";
@@ -145,6 +152,13 @@ public class AbstractConnectorMainConstants {
 
   /** The default interval (in milliseconds) to poll the historical data queue. */
   public static final long CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_DEFAULT = 10000;
+
+  /**
+   * The default aggregation period (in seconds) for data points processed from the historical data
+   * queue. The value of -1 indicates that data aggregation is disabled.
+   */
+  public static final long CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_DEFAULT =
+      QUEUE_DATA_AGGREGATION_PERIOD_SECS_DISABLED;
 
   /**
    * Default value of boolean flag indicating if string history data should be retrieved from the

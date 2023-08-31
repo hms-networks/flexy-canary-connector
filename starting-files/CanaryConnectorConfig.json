@@ -6,6 +6,7 @@
     "Utf8StringSupport": false,
     "QueueDataPollSizeMins": 5,
     "QueueDataPollIntervalMillis": 0,
+    "QueueDataAggregationPeriodSecs": -1,
     "QueueDataPollWarnBehindTimeMins": 4,
     "QueueDataPollMaxBehindTimeMins": 10
   },

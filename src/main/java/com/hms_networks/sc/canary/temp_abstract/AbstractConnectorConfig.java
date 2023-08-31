@@ -332,6 +332,44 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
   }
 
   /**
+   * Get the queue data aggregation period in seconds from the configuration.
+   *
+   * @return queue data aggregation period in seconds
+   * @since 1.0.0
+   */
+  public long getQueueDataAggregationPeriodSecs() {
+    long queueDataAggregationPeriodSecs =
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_DEFAULT;
+    try {
+      if (configurationObject
+          .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+          .has(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_KEY)) {
+        queueDataAggregationPeriodSecs =
+            configurationObject
+                .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+                .getLong(
+                    AbstractConnectorMainConstants
+                        .CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_KEY);
+      } else {
+        logMissingField(
+            AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_KEY,
+            String.valueOf(
+                AbstractConnectorMainConstants
+                    .CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_DEFAULT));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_KEY,
+          String.valueOf(
+              AbstractConnectorMainConstants
+                  .CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_DEFAULT),
+          e);
+    }
+
+    return queueDataAggregationPeriodSecs;
+  }
+
+  /**
    * Get the queue diagnostic tags enabled setting from the configuration.
    *
    * @return queue diagnostic tags enabled setting
@@ -432,6 +470,9 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
     generalConfigObject.put(
         AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_KEY,
         AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_DEFAULT);
+    generalConfigObject.put(
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_KEY,
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_AGGREGATION_PERIOD_SECS_DEFAULT);
     generalConfigObject.put(
         AbstractConnectorMainConstants.CONFIG_FILE_ENABLE_QUEUE_DIAGNOSTIC_TAGS_KEY,
         AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT);
