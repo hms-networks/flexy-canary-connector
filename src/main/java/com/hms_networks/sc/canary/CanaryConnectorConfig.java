@@ -266,6 +266,8 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getString(CONFIG_FILE_API_URL_KEY);
+      } else {
+        logMissingField(CONFIG_FILE_API_URL_KEY);
       }
     } catch (JSONException e) {
       handleCriticalError(e, CONFIG_FILE_API_URL_KEY);
@@ -292,6 +294,8 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_AUTH_CONFIGURATION_OBJECT_KEY)
                 .getString(CONFIG_FILE_AUTH_USERNAME_KEY);
+      } else {
+        logMissingField(CONFIG_FILE_AUTH_USERNAME_KEY);
       }
     } catch (JSONException e) {
       /* The connector will work if http anonymous requests are in use
@@ -321,6 +325,8 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_AUTH_CONFIGURATION_OBJECT_KEY)
                 .getString(CONFIG_FILE_AUTH_PASSWORD_KEY);
+      } else {
+        logMissingField(CONFIG_FILE_AUTH_PASSWORD_KEY);
       }
 
     } catch (JSONException e) {
@@ -350,6 +356,8 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getString(CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY);
+      } else {
+        logMissingField(CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY, DEFAULT_CONFIG_API_HISTORIAN);
       }
     } catch (JSONException e) {
       handleError(e, CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY);
@@ -375,6 +383,10 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getLong(CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY);
+      } else {
+        logMissingField(
+            CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY,
+            String.valueOf(DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS));
       }
     } catch (JSONException e) {
       handleError(e, CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY);
@@ -400,6 +412,8 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getString(CONFIG_FILE_API_SENDER_API_VER_NUM_KEY);
+      } else {
+        logMissingField(CONFIG_FILE_API_SENDER_API_VER_NUM_KEY, DEFAULT_CONFIG_SENDER_API_VERSION);
       }
     } catch (JSONException e) {
       handleError(e, CONFIG_FILE_API_SENDER_API_VER_NUM_KEY);
@@ -426,6 +440,10 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getInt(CONFIG_FILE_API_CLIENT_TIMEOUT_KEY);
+      } else {
+        logMissingField(
+            CONFIG_FILE_API_CLIENT_TIMEOUT_KEY,
+            String.valueOf(DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS));
       }
     } catch (JSONException e) {
       handleError(e, CONFIG_FILE_API_CLIENT_TIMEOUT_KEY);
@@ -451,6 +469,9 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getInt(CONFIG_FILE_API_FILE_SIZE_KEY);
+      } else {
+        logMissingField(
+            CONFIG_FILE_API_FILE_SIZE_KEY, String.valueOf(DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB));
       }
     } catch (JSONException e) {
       handleError(e, CONFIG_FILE_API_FILE_SIZE_KEY);
@@ -476,6 +497,10 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getBoolean(CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY);
+      } else {
+        logMissingField(
+            CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY,
+            String.valueOf(DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS));
       }
     } catch (JSONException e) {
       handleError(e, CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY);
