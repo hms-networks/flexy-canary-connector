@@ -441,7 +441,7 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
             String.valueOf(
                 AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT));
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       logFailedField(
           AbstractConnectorMainConstants.CONFIG_FILE_ENABLE_QUEUE_DIAGNOSTIC_TAGS_KEY,
           String.valueOf(
