@@ -3,7 +3,6 @@ package com.hms_networks.sc.canary;
 import com.hms_networks.americas.sc.extensions.config.exceptions.ConfigFileException;
 import com.hms_networks.americas.sc.extensions.json.JSONException;
 import com.hms_networks.americas.sc.extensions.json.JSONObject;
-import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorConfig;
 
 /**
@@ -270,7 +269,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
         logMissingField(CONFIG_FILE_API_URL_KEY);
       }
     } catch (JSONException e) {
-      handleCriticalError(e, CONFIG_FILE_API_URL_KEY);
+      logFailedField(CONFIG_FILE_API_URL_KEY, e);
     }
 
     return apiUrl;
@@ -301,7 +300,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
       /* The connector will work if http anonymous requests are in use
       as long as there is an empty json object in the request body. Values
       are ignored. */
-      handleCriticalError(e, CONFIG_FILE_AUTH_USERNAME_KEY);
+      logFailedField(CONFIG_FILE_AUTH_USERNAME_KEY, e);
     }
 
     return apiUsername;
@@ -333,7 +332,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
       /* The connector will work if http anonymous requests are in use
       as long as there is an empty json object in the request body. Values
       are ignored. */
-      handleCriticalError(e, CONFIG_FILE_AUTH_PASSWORD_KEY);
+      logFailedField(CONFIG_FILE_AUTH_PASSWORD_KEY, e);
     }
 
     return apiUserPassword;
@@ -360,7 +359,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
         logMissingField(CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY, DEFAULT_CONFIG_API_HISTORIAN);
       }
     } catch (JSONException e) {
-      handleError(e, CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY);
+      logFailedField(CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY, DEFAULT_CONFIG_API_HISTORIAN, e);
     }
 
     return apiHistorian;
@@ -389,7 +388,10 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             String.valueOf(DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS));
       }
     } catch (JSONException e) {
-      handleError(e, CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY);
+      logFailedField(
+          CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY,
+          String.valueOf(DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS),
+          e);
     }
 
     return queueDataPostRateMillis;
@@ -416,7 +418,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
         logMissingField(CONFIG_FILE_API_SENDER_API_VER_NUM_KEY, DEFAULT_CONFIG_SENDER_API_VERSION);
       }
     } catch (JSONException e) {
-      handleError(e, CONFIG_FILE_API_SENDER_API_VER_NUM_KEY);
+      logFailedField(CONFIG_FILE_API_SENDER_API_VER_NUM_KEY, DEFAULT_CONFIG_SENDER_API_VERSION, e);
       // TODO: critical error handling, change from normal to critical error
     }
 
@@ -446,7 +448,10 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             String.valueOf(DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS));
       }
     } catch (JSONException e) {
-      handleError(e, CONFIG_FILE_API_CLIENT_TIMEOUT_KEY);
+      logFailedField(
+          CONFIG_FILE_API_CLIENT_TIMEOUT_KEY,
+          String.valueOf(DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS),
+          e);
     }
 
     return apiClientTimeout;
@@ -474,7 +479,8 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             CONFIG_FILE_API_FILE_SIZE_KEY, String.valueOf(DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB));
       }
     } catch (JSONException e) {
-      handleError(e, CONFIG_FILE_API_FILE_SIZE_KEY);
+      logFailedField(
+          CONFIG_FILE_API_FILE_SIZE_KEY, String.valueOf(DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB), e);
     }
 
     return apiClientTimeout;
@@ -503,40 +509,13 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             String.valueOf(DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS));
       }
     } catch (JSONException e) {
-      handleError(e, CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY);
+      logFailedField(
+          CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY,
+          String.valueOf(DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS),
+          e);
     }
 
     return apiClientTimeout;
-  }
-
-  /**
-   * Error handling for the class functions.
-   *
-   * @param e the exception to handle
-   * @param problemItem the JSON API key that was unable to be retrieved
-   * @since 1.0.0
-   */
-  private static void handleError(JSONException e, String problemItem) {
-    Logger.LOG_SERIOUS(
-        "There was an error retrieving the "
-            + problemItem
-            + " from the connector configuration file.");
-    Logger.LOG_EXCEPTION(e);
-  }
-
-  /**
-   * Critical error handling for the class functions.
-   *
-   * @param e the exception to handle
-   * @param problemItem the JSON API key that was unable to be retrieved
-   * @since 1.0.0
-   */
-  private static void handleCriticalError(JSONException e, String problemItem) {
-    Logger.LOG_CRITICAL(
-        "There was an error retrieving the "
-            + problemItem
-            + " from the connector configuration file.");
-    Logger.LOG_EXCEPTION(e);
   }
 
   /**
