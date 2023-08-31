@@ -695,8 +695,8 @@ public abstract class AbstractConnectorMain {
         }
 
         // Get aggregation configuration
-        // TODO: Implement config object and better exception handling in class level
-        SCTimeSpan dataAggregationTimeSpan = new SCTimeSpan(5, SCTimeUnit.SECONDS);
+        long queueDataAggregationPeriodSecs =
+            abstractConnectorConfig.getQueueDataAggregationPeriodSecs();
 
         // Retrieve data from queue (if required)
         try {
@@ -722,11 +722,14 @@ public abstract class AbstractConnectorMain {
           int numDatapointsReadFromQueue;
           ArrayList datapointsReadFromQueueList = null;
           Map datapointsReadFromQueueMap = null;
-          if (dataAggregationTimeSpan == null) {
+          if (queueDataAggregationPeriodSecs
+              == AbstractConnectorMainConstants.QUEUE_DATA_AGGREGATION_PERIOD_SECS_DISABLED) {
             datapointsReadFromQueueList =
                 HistoricalDataQueueManager.getFifoNextSpanDataAllGroups(startNewTimeTracker);
             numDatapointsReadFromQueue = datapointsReadFromQueueList.size();
           } else {
+            SCTimeSpan dataAggregationTimeSpan =
+                new SCTimeSpan(queueDataAggregationPeriodSecs, SCTimeUnit.SECONDS);
             datapointsReadFromQueueMap =
                 HistoricalDataQueueManager.getFifoNextSpanDataAllGroups(
                     startNewTimeTracker, dataAggregationTimeSpan);
