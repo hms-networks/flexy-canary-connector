@@ -130,13 +130,30 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
    * Get the configured connector log level from the configuration.
    *
    * @return connector log level
-   * @throws JSONException if unable to get connector log level from configuration
    * @since 1.0.0
    */
-  public int getConnectorLogLevel() throws JSONException {
-    return configurationObject
-        .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-        .getInt(AbstractConnectorMainConstants.CONFIG_FILE_LOG_LEVEL_KEY);
+  public int getConnectorLogLevel() {
+    int logLevel = AbstractConnectorMainConstants.CONFIG_FILE_LOG_LEVEL_DEFAULT;
+    try {
+      if (configurationObject
+          .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+          .has(AbstractConnectorMainConstants.CONFIG_FILE_LOG_LEVEL_KEY)) {
+        logLevel =
+            configurationObject
+                .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+                .getInt(AbstractConnectorMainConstants.CONFIG_FILE_LOG_LEVEL_KEY);
+      } else {
+        logMissingField(
+            AbstractConnectorMainConstants.CONFIG_FILE_LOG_LEVEL_KEY,
+            String.valueOf(AbstractConnectorMainConstants.CONFIG_FILE_LOG_LEVEL_DEFAULT));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_LOG_LEVEL_KEY,
+          String.valueOf(AbstractConnectorMainConstants.CONFIG_FILE_LOG_LEVEL_DEFAULT),
+          e);
+    }
+    return logLevel;
   }
 
   /**
@@ -149,14 +166,23 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
   public boolean getStringUtf8Support() {
     boolean isUtf8Supported = false;
     try {
-      isUtf8Supported =
-          configurationObject
-              .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-              .getBoolean(AbstractConnectorMainConstants.CONFIG_FILE_UTF8_STRING_SUPPORT_KEY);
-    } catch (JSONException e) {
-      Logger.LOG_DEBUG(
-          AbstractConnectorMainConstants.CONFIG_FILE_UTF8_STRING_SUPPORT_KEY
-              + " not found in configuration file.");
+      if (configurationObject
+          .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+          .has(AbstractConnectorMainConstants.CONFIG_FILE_UTF8_STRING_SUPPORT_KEY)) {
+        isUtf8Supported =
+            configurationObject
+                .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+                .getBoolean(AbstractConnectorMainConstants.CONFIG_FILE_UTF8_STRING_SUPPORT_KEY);
+      } else {
+        logMissingField(
+            AbstractConnectorMainConstants.CONFIG_FILE_UTF8_STRING_SUPPORT_KEY,
+            String.valueOf(AbstractConnectorMainConstants.CONFIG_FILE_UTF8_STRING_SUPPORT_DEFAULT));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_UTF8_STRING_SUPPORT_KEY,
+          String.valueOf(AbstractConnectorMainConstants.CONFIG_FILE_UTF8_STRING_SUPPORT_DEFAULT),
+          e);
     }
     return isUtf8Supported;
   }
@@ -165,28 +191,32 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
    * Get the queue data string enabled setting from the configuration.
    *
    * @return queue data string enabled setting
-   * @throws JSONException if unable to get queue data string enabled setting from configuration
    * @since 1.0.0
    */
-  public boolean getQueueDataStringEnabled() throws JSONException {
-    boolean queueDataStringEnabled;
-    if (configurationObject
-        .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-        .has(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_STRING_HISTORY_KEY)) {
-      queueDataStringEnabled =
-          configurationObject
-              .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-              .getBoolean(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_STRING_HISTORY_KEY);
-    } else {
-      String defaultStringEnabledStr =
+  public boolean getQueueDataStringEnabled() {
+    boolean queueDataStringEnabled =
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_STRING_HISTORY_ENABLED_DEFAULT;
+    try {
+      if (configurationObject
+          .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+          .has(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_STRING_HISTORY_KEY)) {
+        queueDataStringEnabled =
+            configurationObject
+                .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+                .getBoolean(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_STRING_HISTORY_KEY);
+      } else {
+        logMissingField(
+            AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_STRING_HISTORY_KEY,
+            String.valueOf(
+                AbstractConnectorMainConstants
+                    .CONFIG_FILE_QUEUE_DATA_STRING_HISTORY_ENABLED_DEFAULT));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_STRING_HISTORY_KEY,
           String.valueOf(
-              AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_STRING_HISTORY_ENABLED_DEFAULT);
-      Logger.LOG_WARN(
-          "The queue data string enabled setting was not set. Using default value of "
-              + defaultStringEnabledStr
-              + ".");
-      queueDataStringEnabled =
-          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_STRING_HISTORY_ENABLED_DEFAULT;
+              AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_STRING_HISTORY_ENABLED_DEFAULT),
+          e);
     }
 
     return queueDataStringEnabled;
@@ -196,28 +226,31 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
    * Get the queue data poll size in minutes from the configuration.
    *
    * @return queue data poll size in minutes
-   * @throws JSONException if unable to get queue data string enabled setting from configuration
    * @since 1.0.0
    */
-  public long getQueueDataPollSizeMinutes() throws JSONException {
-    long queueDataPollSizeMinutes;
-    if (configurationObject
-        .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-        .has(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_KEY)) {
-      queueDataPollSizeMinutes =
-          configurationObject
-              .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-              .getLong(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_KEY);
-    } else {
-      String defaultPollSizeStr =
+  public long getQueueDataPollSizeMinutes() {
+    long queueDataPollSizeMinutes =
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_DEFAULT;
+    try {
+      if (configurationObject
+          .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+          .has(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_KEY)) {
+        queueDataPollSizeMinutes =
+            configurationObject
+                .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+                .getLong(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_KEY);
+      } else {
+        logMissingField(
+            AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_KEY,
+            String.valueOf(
+                AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_DEFAULT));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_KEY,
           String.valueOf(
-              AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_DEFAULT);
-      Logger.LOG_WARN(
-          "The queue data poll size setting was not set. Using default value of "
-              + defaultPollSizeStr
-              + " minutes.");
-      queueDataPollSizeMinutes =
-          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_DEFAULT;
+              AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_SIZE_MINS_DEFAULT),
+          e);
     }
 
     return queueDataPollSizeMinutes;
@@ -227,34 +260,41 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
    * Get the queue warning data polling run behind time in minutes setting from the configuration.
    *
    * @return queue warning data polling run behind time in minutes
-   * @throws JSONException if unable to get queue warning data polling run behind time in minutes
-   *     setting from configuration
    * @since 1.0.0
    */
-  public long getQueueDataPollWarnBehindTimeMinutes() throws JSONException {
-    long queueDataPollWarnBehindTimeMinutes;
-    if (configurationObject
-        .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-        .has(
-            AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_KEY)) {
-      queueDataPollWarnBehindTimeMinutes =
-          configurationObject
-              .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-              .getLong(
-                  AbstractConnectorMainConstants
-                      .CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_KEY);
-    } else {
-      String defaultQueueDataPollWarnBehindTimeMinsStr =
+  public long getQueueDataPollWarnBehindTimeMinutes() {
+    long queueDataPollWarnBehindTimeMinutes =
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_DEFAULT;
+    try {
+      if (configurationObject
+          .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+          .has(
+              AbstractConnectorMainConstants
+                  .CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_KEY)) {
+        queueDataPollWarnBehindTimeMinutes =
+            configurationObject
+                .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+                .getLong(
+                    AbstractConnectorMainConstants
+                        .CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_KEY);
+      } else {
+        String defaultQueueDataPollWarnBehindTimeMinsStr =
+            String.valueOf(
+                AbstractConnectorMainConstants
+                    .CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_DEFAULT);
+        Logger.LOG_WARN(
+            "The queue warning data polling run behind time setting was not set. "
+                + "Using default value of "
+                + defaultQueueDataPollWarnBehindTimeMinsStr
+                + " minutes.");
+      }
+    } catch (Exception e) {
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_KEY,
           String.valueOf(
               AbstractConnectorMainConstants
-                  .CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_DEFAULT);
-      Logger.LOG_WARN(
-          "The queue warning data polling run behind time setting was not set. "
-              + "Using default value of "
-              + defaultQueueDataPollWarnBehindTimeMinsStr
-              + " minutes.");
-      queueDataPollWarnBehindTimeMinutes =
-          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_DEFAULT;
+                  .CONFIG_FILE_QUEUE_DATA_POLL_WARN_BEHIND_TIME_MINS_DEFAULT),
+          e);
     }
 
     return queueDataPollWarnBehindTimeMinutes;
@@ -267,33 +307,37 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
    * indicates that the functionality is disabled.
    *
    * @return queue maximum data polling run behind time in minutes
-   * @throws JSONException if unable to get queue maximum data polling run behind time in minutes
-   *     setting from configuration
    * @since 1.0.0
    */
-  public long getQueueDataPollMaxBehindTimeMinutes() throws JSONException {
-    long queueDataPollMaxBehindTimeMinutes;
-    if (configurationObject
-        .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-        .has(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_KEY)) {
-      queueDataPollMaxBehindTimeMinutes =
-          configurationObject
-              .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-              .getLong(
-                  AbstractConnectorMainConstants
-                      .CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_KEY);
-    } else {
-      String defaultQueueDataPollMaxBehindTimeMinsStr =
+  public long getQueueDataPollMaxBehindTimeMinutes() {
+    long queueDataPollMaxBehindTimeMinutes =
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_DEFAULT;
+    try {
+      if (configurationObject
+          .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+          .has(
+              AbstractConnectorMainConstants
+                  .CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_KEY)) {
+        queueDataPollMaxBehindTimeMinutes =
+            configurationObject
+                .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+                .getLong(
+                    AbstractConnectorMainConstants
+                        .CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_KEY);
+      } else {
+        logMissingField(
+            AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_KEY,
+            String.valueOf(
+                AbstractConnectorMainConstants
+                    .CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_DEFAULT));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_KEY,
           String.valueOf(
               AbstractConnectorMainConstants
-                  .CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_DEFAULT);
-      Logger.LOG_WARN(
-          "The queue maximum data polling run behind time setting was not set. "
-              + "Using default value of "
-              + defaultQueueDataPollMaxBehindTimeMinsStr
-              + " minutes.");
-      queueDataPollMaxBehindTimeMinutes =
-          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_DEFAULT;
+                  .CONFIG_FILE_QUEUE_DATA_POLL_MAX_BEHIND_TIME_MINS_DEFAULT),
+          e);
     }
 
     return queueDataPollMaxBehindTimeMinutes;
@@ -303,29 +347,33 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
    * Get the queue data poll interval in milliseconds from the configuration.
    *
    * @return queue data poll interval in milliseconds
-   * @throws JSONException if unable to get queue data poll interval from the configuration file
    * @since 1.0.0
    */
-  public long getQueueDataPollIntervalMillis() throws JSONException {
-    long queueDataPollIntervalMillis;
-    if (configurationObject
-        .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-        .has(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_KEY)) {
-      queueDataPollIntervalMillis =
-          configurationObject
-              .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
-              .getLong(
-                  AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_KEY);
-    } else {
-      String defaultPollInterval =
+  public long getQueueDataPollIntervalMillis() {
+    long queueDataPollIntervalMillis =
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_DEFAULT;
+    try {
+      if (configurationObject
+          .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+          .has(AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_KEY)) {
+        queueDataPollIntervalMillis =
+            configurationObject
+                .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
+                .getLong(
+                    AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_KEY);
+      } else {
+        logMissingField(
+            AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_KEY,
+            String.valueOf(
+                AbstractConnectorMainConstants
+                    .CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_DEFAULT));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_KEY,
           String.valueOf(
-              AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_DEFAULT);
-      Logger.LOG_WARN(
-          "The queue data poll interval setting was not set. Using default value of "
-              + defaultPollInterval
-              + " milliseconds.");
-      queueDataPollIntervalMillis =
-          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_DEFAULT;
+              AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_DATA_POLL_INTERVAL_MILLIS_DEFAULT),
+          e);
     }
 
     return queueDataPollIntervalMillis;
@@ -376,7 +424,8 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
    * @since 1.0.0
    */
   public boolean getQueueDiagnosticTagsEnabled() {
-    boolean queueDiagnosticTagsEnabled;
+    boolean queueDiagnosticTagsEnabled =
+        AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT;
     try {
       if (configurationObject
           .getJSONObject(AbstractConnectorMainConstants.CONFIG_FILE_GENERAL_KEY)
@@ -387,18 +436,17 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
                 .getBoolean(
                     AbstractConnectorMainConstants.CONFIG_FILE_ENABLE_QUEUE_DIAGNOSTIC_TAGS_KEY);
       } else {
-        queueDiagnosticTagsEnabled =
-            AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT;
+        logMissingField(
+            AbstractConnectorMainConstants.CONFIG_FILE_ENABLE_QUEUE_DIAGNOSTIC_TAGS_KEY,
+            String.valueOf(
+                AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT));
       }
     } catch (JSONException e) {
-      queueDiagnosticTagsEnabled =
-          AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT;
-      Logger.LOG_WARN(
-          "The queue diagnostic tags enabled setting could not be read from the configuration"
-              + " file. Using default value of "
-              + AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT
-              + ".");
-      Logger.LOG_EXCEPTION(e);
+      logFailedField(
+          AbstractConnectorMainConstants.CONFIG_FILE_ENABLE_QUEUE_DIAGNOSTIC_TAGS_KEY,
+          String.valueOf(
+              AbstractConnectorMainConstants.CONFIG_FILE_QUEUE_ENABLE_DIAGNOSTIC_TAGS_DEFAULT),
+          e);
     }
 
     return queueDiagnosticTagsEnabled;
