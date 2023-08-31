@@ -268,7 +268,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
       } else {
         logMissingField(CONFIG_FILE_API_URL_KEY);
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       logFailedField(CONFIG_FILE_API_URL_KEY, e);
     }
 
@@ -296,7 +296,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
       } else {
         logMissingField(CONFIG_FILE_AUTH_USERNAME_KEY);
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       /* The connector will work if http anonymous requests are in use
       as long as there is an empty json object in the request body. Values
       are ignored. */
@@ -328,7 +328,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
         logMissingField(CONFIG_FILE_AUTH_PASSWORD_KEY);
       }
 
-    } catch (JSONException e) {
+    } catch (Exception e) {
       /* The connector will work if http anonymous requests are in use
       as long as there is an empty json object in the request body. Values
       are ignored. */
@@ -358,7 +358,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
       } else {
         logMissingField(CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY, DEFAULT_CONFIG_API_HISTORIAN);
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       logFailedField(CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY, DEFAULT_CONFIG_API_HISTORIAN, e);
     }
 
@@ -387,7 +387,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY,
             String.valueOf(DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS));
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       logFailedField(
           CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY,
           String.valueOf(DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS),
@@ -417,7 +417,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
       } else {
         logMissingField(CONFIG_FILE_API_SENDER_API_VER_NUM_KEY, DEFAULT_CONFIG_SENDER_API_VERSION);
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       logFailedField(CONFIG_FILE_API_SENDER_API_VER_NUM_KEY, DEFAULT_CONFIG_SENDER_API_VERSION, e);
       // TODO: critical error handling, change from normal to critical error
     }
@@ -447,7 +447,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             CONFIG_FILE_API_CLIENT_TIMEOUT_KEY,
             String.valueOf(DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS));
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       logFailedField(
           CONFIG_FILE_API_CLIENT_TIMEOUT_KEY,
           String.valueOf(DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS),
@@ -478,7 +478,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
         logMissingField(
             CONFIG_FILE_API_FILE_SIZE_KEY, String.valueOf(DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB));
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       logFailedField(
           CONFIG_FILE_API_FILE_SIZE_KEY, String.valueOf(DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB), e);
     }
@@ -508,7 +508,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
             CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY,
             String.valueOf(DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS));
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       logFailedField(
           CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY,
           String.valueOf(DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS),
