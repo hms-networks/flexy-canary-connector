@@ -10,9 +10,9 @@
     "QueueDataPollWarnBehindTimeMins": 4,
     "QueueDataPollMaxBehindTimeMins": 10
   },
-  "Canary":{
+  "Canary": {
     "Api": {
-      "Url":"https://<USER-DOMAIN>:PORT_NUM/",
+      "Url": "https://<USER-DOMAIN>:PORT_NUM/",
       "SenderApiVersionNumber": "v1",
       "ReceiverApiVersionNumber": "v2",
       "HistorianServerName ": "localhost",
@@ -23,8 +23,8 @@
       "QueueDataPostRateMillis": 3000
     },
     "Auth": {
-      "UserName":"<USER-NAME>",
-      "UserPassword":"<USER-PASSWORD>"
+      "UserName": "<USER-NAME>",
+      "UserPassword": "<USER-PASSWORD>"
     }
   }
 }
