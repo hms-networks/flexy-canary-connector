@@ -11,6 +11,8 @@ import com.hms_networks.americas.sc.extensions.json.JSONArray;
 import com.hms_networks.americas.sc.extensions.json.JSONObject;
 import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUtils;
+import com.hms_networks.sc.canary.api.CanaryApiRequestBuilder;
+import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
 import java.util.Date;
 
 /**
@@ -210,12 +212,15 @@ public class CanaryDataPayload {
   }
 
   /**
-   * Gets the contents of the payload as a JSON string.
+   * Gets the payload as a built {@link RequestInfo} object for sending to Canary.
    *
-   * @return payload contents as JSON string
+   * <p>The payload is built as a {@link RequestInfo} object using the {@link
+   * CanaryApiRequestBuilder#getStoreDataRequest(String)} method.
+   *
+   * @return the payload as a built {@link RequestInfo} object
    * @since 1.0.0
    */
-  public synchronized String getPayload() {
-    return tvqsJson.toString();
+  public synchronized RequestInfo getPayload() {
+    return CanaryApiRequestBuilder.getStoreDataRequest(tvqsJson.toString());
   }
 }
