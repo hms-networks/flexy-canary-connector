@@ -609,4 +609,14 @@ public abstract class AbstractConnectorConfig extends ConfigFile {
    * @since 1.0.0
    */
   public abstract JSONObject getDefaultConnectorConfigurationObject() throws JSONException;
+
+  /**
+   * Checks the configuration file to determine if required/critical configuration fields have been
+   * loaded and contain acceptable values.
+   *
+   * @return {@code true} if the required configuration fields have been loaded and contain
+   *     acceptable values, {@code false} otherwise.
+   * @since 1.0.0
+   */
+  public abstract boolean checkRequiredConfigLoaded();
 }
