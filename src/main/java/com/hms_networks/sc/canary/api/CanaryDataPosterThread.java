@@ -41,7 +41,10 @@ public class CanaryDataPosterThread extends Thread {
           Logger.LOG_WARN("Unable to send payload to Canary");
         } else {
           SessionManager.updateTokenExpiration();
-          CanaryDataPayloadManager.getNextPayload();
+          boolean removed = CanaryDataPayloadManager.removeNextPayload();
+          if (!removed) {
+            Logger.LOG_WARN("Unable to remove payload from queue");
+          }
         }
       }
 
