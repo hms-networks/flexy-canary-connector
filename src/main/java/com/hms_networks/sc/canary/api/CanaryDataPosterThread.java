@@ -29,12 +29,11 @@ public class CanaryDataPosterThread extends Thread {
   public void run() {
     while (sendDataControl) {
 
-      String payload = CanaryDataPayloadManager.getNextPayload();
+      RequestInfo request = CanaryDataPayloadManager.getNextPayload();
 
       // If there are any payloads to send
-      if (payload != null) {
+      if (request != null) {
         Logger.LOG_DEBUG("Sending completed payload to Canary");
-        RequestInfo request = CanaryApiRequestBuilder.getStoreDataRequest(payload);
         CanaryApiResponseStatus requestStatus = CanaryApiRequestSender.processRequest(request);
 
         if (requestStatus != CanaryApiResponseStatus.GOOD_REQUEST) {
