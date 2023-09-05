@@ -78,38 +78,35 @@ public class SessionManager {
   /**
    * Send a keep alive request to refresh the Canary API session token.
    *
-   * @return true if the keep alive request was sent successfully
    * @since 1.0.0
    */
-  private static RequestInfo sendKeepAlive() {
+  private static void sendKeepAlive() {
     RequestInfo request =
         CanaryApiRequestBuilder.getKeepAliveRequest(
             getCurrentUserToken(), getCurrentSessionToken());
     updateTokenExpiration();
-    return CanaryApiRequestSender.processRequest(request);
+    CanaryApiRequestSender.processRequest(request);
   }
 
   /**
    * Get the user token from the Canary API.
    *
-   * @return the user token from the Canary API
    * @since 1.0.0
    */
-  private static RequestInfo getUserToken() {
+  private static void getUserToken() {
     RequestInfo request = CanaryApiRequestBuilder.getUserTokenRequest();
-    return CanaryApiRequestSender.processRequest(request);
+    CanaryApiRequestSender.processRequest(request);
   }
 
   /**
    * Get the session token from the Canary API.
    *
-   * @return the session token from the Canary API
    * @since 1.0.0
    */
-  private static RequestInfo getSessionToken() {
+  private static void getSessionToken() {
     RequestInfo request = CanaryApiRequestBuilder.getSessionTokenRequest(getCurrentUserToken());
     updateTokenExpiration();
-    return CanaryApiRequestSender.processRequest(request);
+    CanaryApiRequestSender.processRequest(request);
   }
 
   /**
@@ -117,9 +114,9 @@ public class SessionManager {
    *
    * @since 1.0.0
    */
-  private static RequestInfo revokeUserToken() {
+  private static void revokeUserToken() {
     RequestInfo request = CanaryApiRequestBuilder.getRevokeUserTokenRequest(currentUserToken);
-    return CanaryApiRequestSender.processRequest(request);
+    CanaryApiRequestSender.processRequest(request);
   }
 
   /**
@@ -127,10 +124,10 @@ public class SessionManager {
    *
    * @since 1.0.0
    */
-  private static RequestInfo revokeSessionToken() {
+  private static void revokeSessionToken() {
     RequestInfo request =
         CanaryApiRequestBuilder.getRevokeSessionTokenRequest(currentUserToken, currentSessionToken);
-    return CanaryApiRequestSender.processRequest(request);
+    CanaryApiRequestSender.processRequest(request);
   }
 
   /**
