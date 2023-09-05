@@ -443,12 +443,19 @@ public abstract class AbstractConnectorMain {
       abstractConnectorConfig = null;
     }
 
-    // Check if configuration file loaded successfully (if initialization has not failed)
+    // Verify configuration file loaded successfully
     if (abstractConnectorConfig == null && initializeSuccess) {
       Logger.LOG_CRITICAL("Failed to load the connector configuration file!");
       initializeSuccess = false;
-    } else if (initializeSuccess) {
+    } else if (abstractConnectorConfig != null
+        && !abstractConnectorConfig.checkRequiredConfigLoaded()) {
+      Logger.LOG_CRITICAL(
+          "The connector configuration file is missing required or critical values!");
+      initializeSuccess = false;
+    }
 
+    // Proceed with initialization if configuration file loaded successfully
+    if (initializeSuccess) {
       // Load connector log level (default of TRACE, but should never encounter this)
       int connectorLogLevel = Logger.LOG_LEVEL_TRACE;
       try {
@@ -939,6 +946,13 @@ public abstract class AbstractConnectorMain {
    *
    * <p>The {@link AbstractConnectorConfig} object returned by this method is used to configure
    * various aspects of the connector, such as the historical queue settings, log level, etc.
+   *
+   * <p>The returned {@link AbstractConnectorConfig} object will be verified to ensure that all
+   * required/critical values are loaded using the {@link
+   * AbstractConnectorConfig#checkRequiredConfigLoaded()} method. The connector may optionally call
+   * the {@link AbstractConnectorConfig#checkRequiredConfigLoaded()} method directly, and as
+   * required, could set default values, or wait for external configuration, such as through HTTP
+   * APIs.
    *
    * @throws Exception if the configuration file could not be loaded
    * @return the {@link AbstractConnectorConfig} object containing the connector configuration. If

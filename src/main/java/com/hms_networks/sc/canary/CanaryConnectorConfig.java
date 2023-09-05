@@ -519,11 +519,14 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
   }
 
   /**
-   * Ensure each required configuration option has been set to something other than the default.
+   * Checks the configuration file to determine if required/critical configuration fields have been
+   * loaded and contain acceptable values.
    *
-   * @return true if all required config options have been set
+   * @return {@code true} if the required configuration fields have been loaded and contain
+   *     acceptable values, {@code false} otherwise.
+   * @since 1.0.0
    */
-  public boolean checkCriticalConfigLoaded() {
+  public boolean checkRequiredConfigLoaded() {
     boolean allLoaded = true;
     CanaryConnectorConfig connectorConfig = CanaryConnectorMain.getConnectorConfig();
 

@@ -219,6 +219,13 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * <p>The {@link AbstractConnectorConfig} object returned by this method is used to configure
    * various aspects of the connector, such as the historical queue settings, log level, etc.
    *
+   * <p>The returned {@link AbstractConnectorConfig} object will be verified to ensure that all
+   * required/critical values are loaded using the {@link
+   * AbstractConnectorConfig#checkRequiredConfigLoaded()} method. The connector may optionally call
+   * the {@link AbstractConnectorConfig#checkRequiredConfigLoaded()} method directly, and as
+   * required, could set default values, or wait for external configuration, such as through HTTP
+   * APIs.
+   *
    * <p>NOTE: The only reason this method is necessary is that Java 1.4 doesn't support type
    * parameterization.
    *
@@ -231,12 +238,11 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   public AbstractConnectorConfig connectorConfigLoad() throws Exception {
     connectorConfig = new CanaryConnectorConfig();
 
-    boolean configLoadSuccess = connectorConfig.checkCriticalConfigLoaded();
+    // Manually check for required config to allow opportunity to get values from HTTP API
+    boolean configLoadSuccess = connectorConfig.checkRequiredConfigLoaded();
 
     // Handle missing fields
     if (!configLoadSuccess) {
-      Logger.LOG_CRITICAL(
-          "Critical configuration item(s) are missing. The connector will shutdown.");
       // TODO: Implement HTTP API listener to wait and get values
     }
 
