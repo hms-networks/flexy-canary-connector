@@ -21,6 +21,7 @@ If no configuration file is detected, a default configuration file will be gener
     "Utf8StringSupport": false,
     "QueueDataPollSizeMins": 5,
     "QueueDataPollIntervalMillis": 0,
+    "QueueDataAggregationPeriodSecs": -1,
     "QueueDataPollWarnBehindTimeMins": 4,
     "QueueDataPollMaxBehindTimeMins": 10
   },
@@ -71,6 +72,12 @@ Changing this will modify the amount of data checked during each poll interval.
 
 #### QueueDataPollIntervalMillis
 Parameter to configure the maximum speed that the historical data be polled for new data points to send.
+
+#### QueueDataAggregationPeriodSecs
+Parameter to configure the aggregation period (in seconds) for data points processed from the historical data queue.
+:::note
+The value of -1 indicates that data aggregation is disabled.
+:::
 
 #### QueueDataPollWarnBehindTimeMins
 Parameter to configure how many milliseconds the data queue will be able to fall behind real time before warnings are logged.
