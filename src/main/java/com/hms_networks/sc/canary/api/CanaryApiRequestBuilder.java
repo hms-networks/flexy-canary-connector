@@ -1,5 +1,7 @@
 package com.hms_networks.sc.canary.api;
 
+import com.hms_networks.americas.sc.extensions.json.JSONArray;
+import com.hms_networks.americas.sc.extensions.json.JSONObject;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUnit;
 import com.hms_networks.sc.canary.CanaryConnectorConfig;
 import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
@@ -173,22 +175,11 @@ public class CanaryApiRequestBuilder {
    */
   public static RequestInfo getStoreDataRequest(String tagData) {
     String url = getApiBase() + API_ENDPOINT_STORE_DATA;
-    String body =
-        "\""
-            + JSON_KEY_USER_TOKEN
-            + "\":\""
-            + SessionManager.getCurrentUserToken()
-            + "\",\""
-            + JSON_KEY_SESSION_TOKEN
-            + "\":\""
-            + SessionManager.getCurrentSessionToken()
-            + "\","
-            + "\""
-            + JSON_KEY_TVQS
-            + "\":"
-            + tagData
-            + "}";
-    return new RequestInfo(url, HEADERS, body);
+    JSONObject requestBodyJson = new JSONObject();
+    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, SessionManager.getCurrentUserToken());
+    requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, SessionManager.getCurrentSessionToken());
+    requestBodyJson.putNonNull(JSON_KEY_TVQS, tagData);
+    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
@@ -201,20 +192,10 @@ public class CanaryApiRequestBuilder {
    */
   public static RequestInfo getKeepAliveRequest(String userToken, String sessionToken) {
     String url = getApiBase() + API_ENDPOINT_KEEP_ALIVE;
-    String body =
-        "{  "
-            + "\""
-            + JSON_KEY_USER_TOKEN
-            + "\":\""
-            + userToken
-            + "\",\n"
-            + "\""
-            + JSON_KEY_SESSION_TOKEN
-            + "\":\""
-            + sessionToken
-            + "\","
-            + "}";
-    return new RequestInfo(url, HEADERS, body);
+    JSONObject requestBodyJson = new JSONObject();
+    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, sessionToken);
+    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
@@ -227,20 +208,10 @@ public class CanaryApiRequestBuilder {
    */
   public static RequestInfo getRevokeSessionTokenRequest(String userToken, String sessionToken) {
     String url = getApiBase() + API_ENDPOINT_REVOKE_SESSION_TOKEN;
-    String body =
-        "{  "
-            + "\""
-            + JSON_KEY_USER_TOKEN
-            + "\":\""
-            + userToken
-            + "\",\n"
-            + "\""
-            + JSON_KEY_SESSION_TOKEN
-            + "\":\""
-            + sessionToken
-            + "\","
-            + "}";
-    return new RequestInfo(url, HEADERS, body);
+    JSONObject requestBodyJson = new JSONObject();
+    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, sessionToken);
+    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
@@ -252,8 +223,9 @@ public class CanaryApiRequestBuilder {
    */
   public static RequestInfo getRevokeUserTokenRequest(String userToken) {
     String url = getApiBase() + API_ENDPOINT_REVOKE_USER_TOKEN;
-    String body = "{  " + "\"" + JSON_KEY_USER_TOKEN + "\":\"" + userToken + "\"}";
-    return new RequestInfo(url, HEADERS, body);
+    JSONObject requestBodyJson = new JSONObject();
+    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
@@ -264,20 +236,10 @@ public class CanaryApiRequestBuilder {
    */
   public static RequestInfo getUserTokenRequest() {
     String url = getApiBase() + API_ENDPOINT_GET_USER_TOKEN;
-    String body =
-        "{\n"
-            + "  \""
-            + JSON_KEY_USERNAME
-            + "\":\""
-            + connectorConfig.getApiUsername()
-            + "\",\n"
-            + "  \""
-            + JSON_KEY_USER_PASSWORD
-            + "\":\""
-            + connectorConfig.getApiUserPassword()
-            + "\"\n"
-            + "}";
-    return new RequestInfo(url, HEADERS, body);
+    JSONObject requestBodyJson = new JSONObject();
+    requestBodyJson.putNonNull(JSON_KEY_USERNAME, connectorConfig.getApiUsername());
+    requestBodyJson.putNonNull(JSON_KEY_USER_PASSWORD, connectorConfig.getApiUserPassword());
+    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
@@ -289,44 +251,21 @@ public class CanaryApiRequestBuilder {
    */
   public static RequestInfo getSessionTokenRequest(String userToken) {
     String url = getApiBase() + API_ENDPOINT_GET_SESSION_TOKEN;
-    String body =
-        "{\n"
-            + "  \""
-            + JSON_KEY_USER_TOKEN
-            + "\":\""
-            + userToken
-            + "\",\n"
-            + "  \""
-            + JSON_KEY_HISTORIANS
-            + "\":[\""
-            + connectorConfig.getApiHistorianServerName()
-            + "\"],\n"
-            + "  \""
-            + JSON_KEY_CLIENT_ID
-            + "\":\""
-            + connectorConfig.getApiHistorianServerName()
-            + "\",\n"
-            + "  \""
-            + JSON_KEY_SETTINGS
-            + "\":{\n"
-            + "  \t\""
-            + JSON_KEY_CLIENT_TIMEOUT
-            + "\":"
-            + SCTimeUnit.SECONDS.toMillis(connectorConfig.getApiClientTimeoutSeconds())
-            + ",\n"
-            + "  \t\""
-            + JSON_KEY_FILE_SIZE
-            + "\":"
-            + connectorConfig.getApiClientFileSize()
-            + ",\n"
-            + "  \t\""
-            + JSON_KEY_AUTO_CREATE_DATASETS
-            + "\": "
-            + connectorConfig.getApiClientAutoCreateDatasets()
-            + "\n"
-            + "  }\n"
-            + "}";
-    return new RequestInfo(url, HEADERS, body);
+    JSONObject requestBodyJson = new JSONObject();
+    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    JSONArray historians = new JSONArray();
+    historians.put(connectorConfig.getApiHistorianServerName());
+    requestBodyJson.putNonNull(JSON_KEY_HISTORIANS, historians);
+    requestBodyJson.putNonNull(JSON_KEY_CLIENT_ID, connectorConfig.getApiHistorianServerName());
+    JSONObject settings = new JSONObject();
+    settings.putNonNull(
+        JSON_KEY_CLIENT_TIMEOUT,
+        SCTimeUnit.SECONDS.toMillis(connectorConfig.getApiClientTimeoutSeconds()));
+    settings.putNonNull(JSON_KEY_FILE_SIZE, connectorConfig.getApiClientFileSize());
+    settings.putNonNull(
+        JSON_KEY_AUTO_CREATE_DATASETS, connectorConfig.getApiClientAutoCreateDatasets());
+    requestBodyJson.putNonNull(JSON_KEY_SETTINGS, settings);
+    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
