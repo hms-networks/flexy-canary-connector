@@ -1,0 +1,32 @@
+```
+{
+  "General": {
+    "LogLevel": 3,
+    "QueueEnableDiagnosticTags": false,
+    "QueueEnableStringHistory": false,
+    "Utf8StringSupport": false,
+    "QueueDataPollSizeMins": 5,
+    "QueueDataPollIntervalMillis": 0,
+    "QueueDataAggregationPeriodSecs": -1,
+    "QueueDataPollWarnBehindTimeMins": 4,
+    "QueueDataPollMaxBehindTimeMins": 10
+  },
+  "Canary":{
+    "Api": {
+      "Url":"https://<USER-DOMAIN>:PORT_NUM/",
+      "SenderApiVersionNumber": "v1",
+      "ReceiverApiVersionNumber": "v2",
+      "HistorianServerName ": "localhost",
+      "ApiClientId": "<deviceName>",
+      "ApiClientTimeoutSeconds": 300,
+      "FileSizeMegabytes": 8,
+      "AutoCreateDatasets": true,
+      "QueueDataPostRateMillis": 3000
+    },
+    "Auth": {
+      "UserName":"<USER-NAME>",
+      "UserPassword":"<USER-PASSWORD>"
+    }
+  }
+}
+```

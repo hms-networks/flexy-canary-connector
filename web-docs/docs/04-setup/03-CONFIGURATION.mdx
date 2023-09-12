@@ -5,6 +5,7 @@ sidebar_label: Configuration
 ---
 
 import LoggingPartial from '@site/docs/_partial/_logging.mdx';
+import ConfigurationJsonPartial from '@site/docs/_partial/_configuration_json.mdx';
 
 The connector configuration is a JSON file stored in the Ewon /usr/ directory with the filename "CanaryConnectorConfig.json".
 To make any configuration changes, modify CanaryConnectorConfig.json and ensure changes are saved
@@ -12,38 +13,7 @@ to the /usr/ directory of the Ewon Flexy.
 
 If no configuration file is detected, a default configuration file will be generated to match what is shown below:
 
-```
-{
-  "General": {
-    "LogLevel": 3,
-    "QueueEnableDiagnosticTags": false,
-    "QueueEnableStringHistory": false,
-    "Utf8StringSupport": false,
-    "QueueDataPollSizeMins": 5,
-    "QueueDataPollIntervalMillis": 0,
-    "QueueDataAggregationPeriodSecs": -1,
-    "QueueDataPollWarnBehindTimeMins": 4,
-    "QueueDataPollMaxBehindTimeMins": 10
-  },
-  "Canary":{
-    "Api": {
-      "Url":"https://<USER-DOMAIN>:PORT_NUM/",
-      "SenderApiVersionNumber": "v1",
-      "ReceiverApiVersionNumber": "v2",
-      "HistorianServerName ": "localhost",
-      "ApiClientId": "<deviceName>",
-      "ApiClientTimeoutSeconds": 300,
-      "FileSizeMegabytes": 8,
-      "AutoCreateDatasets": true,
-      "QueueDataPostRateMillis": 3000
-    },
-    "Auth": {
-      "UserName":"<USER-NAME>",
-      "UserPassword":"<USER-PASSWORD>"
-    }
-  }
-}
-```
+<ConfigurationJsonPartial />
 
 ### General
 This section contains configuration fields which are used to configure the connector.
