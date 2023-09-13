@@ -140,7 +140,7 @@ public class CanaryApiRequestSender {
       Logger.LOG_CRITICAL("Unknown error detected. Request will be resent.");
     } else if (status == CanaryApiResponseStatus.BAD_TOKENS) {
       Logger.LOG_DEBUG("API Session tokens expired, refreshing session tokens.");
-      SessionManager.refreshSessionTokens();
+      SessionManager.sendKeepAliveOrRefreshToken();
     } else if (status == CanaryApiResponseStatus.UNKNOWN_ERROR) {
       Logger.LOG_CRITICAL("API error detected. Please inspect the logs for further details.");
     }

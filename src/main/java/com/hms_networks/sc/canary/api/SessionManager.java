@@ -33,7 +33,7 @@ public class SessionManager {
    *
    * @since 1.0.0
    */
-  public static void refreshSessionTokens() {
+  public static void sendKeepAliveOrRefreshToken() {
     if (millisToSessionExpires() <= 0) {
       getUserToken();
       getSessionToken();
