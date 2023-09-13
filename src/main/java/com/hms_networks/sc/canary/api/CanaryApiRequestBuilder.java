@@ -174,6 +174,9 @@ public class CanaryApiRequestBuilder {
    * @since 1.0.0
    */
   public static RequestInfo getStoreDataRequest(String tagData) {
+    // force up-to-date tokens before every request
+    SessionManager.sendKeepAliveOrRefreshToken();
+
     String url = getApiBase() + API_ENDPOINT_STORE_DATA;
     JSONObject requestBodyJson = new JSONObject();
     requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, SessionManager.getCurrentUserToken());
