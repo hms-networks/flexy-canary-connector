@@ -170,7 +170,7 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public void connectorLoopRun() {
-    // TODO: Implement connector main loop steps
+    SessionManager.refreshSessionTokens();
   }
 
   /**
