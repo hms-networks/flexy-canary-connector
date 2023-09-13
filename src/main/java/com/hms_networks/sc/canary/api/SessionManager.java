@@ -114,7 +114,7 @@ public class SessionManager {
    *
    * @since 1.0.0
    */
-  private static void revokeUserToken() {
+  private static synchronized void revokeUserToken() {
     RequestInfo request = CanaryApiRequestBuilder.getRevokeUserTokenRequest(currentUserToken);
     CanaryApiRequestSender.processRequest(request);
   }
@@ -124,7 +124,7 @@ public class SessionManager {
    *
    * @since 1.0.0
    */
-  private static void revokeSessionToken() {
+  private static synchronized void revokeSessionToken() {
     RequestInfo request =
         CanaryApiRequestBuilder.getRevokeSessionTokenRequest(currentUserToken, currentSessionToken);
     CanaryApiRequestSender.processRequest(request);
@@ -136,7 +136,7 @@ public class SessionManager {
    * @param sessionToken the last used session token to set
    * @since 1.0.0
    */
-  public static void setCurrentSessionToken(String sessionToken) {
+  public static synchronized void setCurrentSessionToken(String sessionToken) {
     currentSessionToken = sessionToken;
   }
 
@@ -146,7 +146,7 @@ public class SessionManager {
    * @param userToken the last used user token to set
    * @since 1.0.0
    */
-  public static void setCurrentUserToken(String userToken) {
+  public static synchronized void setCurrentUserToken(String userToken) {
     currentUserToken = userToken;
   }
 
@@ -156,7 +156,7 @@ public class SessionManager {
    * @return last used user token for the Canary API
    * @since 1.0.0
    */
-  public static String getCurrentUserToken() {
+  public static synchronized String getCurrentUserToken() {
     return currentUserToken;
   }
 
@@ -166,7 +166,7 @@ public class SessionManager {
    * @return last used session token for the Canary API
    * @since 1.0.0
    */
-  public static String getCurrentSessionToken() {
+  public static synchronized String getCurrentSessionToken() {
     return currentSessionToken;
   }
 }
