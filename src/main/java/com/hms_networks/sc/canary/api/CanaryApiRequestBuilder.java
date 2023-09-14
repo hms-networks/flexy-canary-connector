@@ -170,10 +170,11 @@ public class CanaryApiRequestBuilder {
   /**
    * Get the request to store data to the api.
    *
+   * @param tagData The json object containing all tag data to send
    * @return the {@link RequestInfo} object containing the keep alive request
    * @since 1.0.0
    */
-  public static RequestInfo getStoreDataRequest(String tagData) {
+  public static RequestInfo getStoreDataRequest(JSONObject tagData) {
     // force up-to-date tokens before every request
     SessionManager.sendKeepAliveOrRefreshToken();
 

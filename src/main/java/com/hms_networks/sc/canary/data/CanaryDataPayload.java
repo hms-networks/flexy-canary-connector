@@ -215,12 +215,12 @@ public class CanaryDataPayload {
    * Gets the payload as a built {@link RequestInfo} object for sending to Canary.
    *
    * <p>The payload is built as a {@link RequestInfo} object using the {@link
-   * CanaryApiRequestBuilder#getStoreDataRequest(String)} method.
+   * CanaryApiRequestBuilder#getStoreDataRequest(JSONObject)} method.
    *
    * @return the payload as a built {@link RequestInfo} object
    * @since 1.0.0
    */
   public synchronized RequestInfo getPayload() {
-    return CanaryApiRequestBuilder.getStoreDataRequest(tvqsJson.toString());
+    return CanaryApiRequestBuilder.getStoreDataRequest(tvqsJson);
   }
 }
