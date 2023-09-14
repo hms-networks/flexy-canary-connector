@@ -86,17 +86,17 @@ public class CanaryApiRequestSender {
       responseBodyString = SCHttpUtility.httpPost(url, request.getHeaders(), request.getBody());
       Logger.LOG_INFO(responseBodyString);
     } catch (EWException e) {
-      requestHttpsError(e, "Ewon exception during HTTP request to" + url + ".");
+      requestHttpsError(e, "Ewon exception during HTTP request to " + url + ".");
     } catch (IOException e) {
-      requestHttpsError(e, "IO exception during HTTP request to" + url + ".");
+      requestHttpsError(e, "IO exception during HTTP request to " + url + ".");
     } catch (SCHttpEwonException e) {
-      requestHttpsError(e, "Ewon exception during the HTTP request to" + url + ".");
+      requestHttpsError(e, "Ewon exception during the HTTP request to " + url + ".");
     } catch (SCHttpAuthException e) {
-      requestHttpsError(e, "Auth exception during the HTTP request to" + url + ".");
+      requestHttpsError(e, "Auth exception during the HTTP request to " + url + ".");
     } catch (SCHttpConnectionException e) {
-      requestHttpsError(e, "Connection error during the HTTP request to" + url + ".");
+      requestHttpsError(e, "Connection error during the HTTP request to " + url + ".");
     } catch (SCHttpUnknownException e) {
-      requestHttpsError(e, "Unknown exception during the HTTP request to" + url + ".");
+      requestHttpsError(e, "Unknown exception during the HTTP request to " + url + ".");
     }
 
     return responseBodyString;
