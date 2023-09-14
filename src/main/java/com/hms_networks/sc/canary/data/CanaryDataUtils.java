@@ -41,7 +41,7 @@ public class CanaryDataUtils {
    * @since 1.0.0
    */
   public static String getTvqNameForTagName(String tagName) {
-    return CanaryConnectorMain.getInstance().getEwonSerialNumber() + "." + tagName;
+    return CanaryConnectorMain.getConnectorConfig().getApiClientId() + "." + tagName;
   }
 
   /**
