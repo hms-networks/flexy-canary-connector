@@ -236,7 +236,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     apiConfigObject.put(
         CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY, DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS);
     apiConfigObject.put(
-        CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY, DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS);
+        CONFIG_FILE_QUEUE_DATA_POST_RATE_MILLIS_KEY, DEFAULT_CONFIG_QUEUE_DATA_POST_RATE_MILLIS);
     connectorConfigObject.put(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY, apiConfigObject);
 
     // Create auth configuration object
