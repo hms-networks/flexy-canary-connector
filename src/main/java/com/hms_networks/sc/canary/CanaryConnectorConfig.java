@@ -179,7 +179,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    *
    * @since 1.0.0
    */
-  public static final String DEFAULT_CONFIG_API_CLIENT_ID = "<deviceName>";
+  public static final String DEFAULT_CONFIG_API_CLIENT_ID = "Flexy";
 
   /**
    * Default value for the API URL in the configuration file.
