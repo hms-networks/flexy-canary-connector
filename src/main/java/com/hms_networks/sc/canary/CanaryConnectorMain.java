@@ -182,8 +182,15 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public boolean connectorShutDown() {
-    dataThread.quitLoop();
-    SessionManager.revokeTokens();
+    // Request data poster thread to stop
+    if (dataThread != null) {
+      dataThread.quitLoop();
+    }
+
+    // Revoke session tokens
+    if (connectorConfig != null) {
+      SessionManager.revokeTokens();
+    }
 
     return true;
   }
@@ -200,12 +207,15 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   public boolean connectorCleanUp() {
     boolean cleanupFinished = true;
 
-    dataThread.stop();
-    try {
-      dataThread.join();
-    } catch (InterruptedException e) {
-      cleanupFinished = false;
-      Logger.LOG_CRITICAL("Unable to stop data poster thread.");
+    // Stop and join data poster thread
+    if (dataThread != null) {
+      dataThread.stop();
+      try {
+        dataThread.join();
+      } catch (InterruptedException e) {
+        cleanupFinished = false;
+        Logger.LOG_CRITICAL("Unable to stop data poster thread.");
+      }
     }
 
     return cleanupFinished;
