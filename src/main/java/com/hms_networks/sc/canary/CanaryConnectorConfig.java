@@ -179,7 +179,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    *
    * @since 1.0.0
    */
-  public static final String DEFAULT_CONFIG_API_DEVICE_ID = "<deviceName>";
+  public static final String DEFAULT_CONFIG_API_CLIENT_ID = "<deviceName>";
 
   /**
    * Default value for the API URL in the configuration file.
@@ -229,7 +229,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     apiConfigObject.put(
         CONFIG_FILE_API_RECEIVER_API_VER_NUM_KEY, DEFAULT_CONFIG_RECEIVER_API_VERSION);
     apiConfigObject.put(CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY, DEFAULT_CONFIG_API_HISTORIAN);
-    apiConfigObject.put(CONFIG_FILE_API_CLIENT_ID_KEY, DEFAULT_CONFIG_API_DEVICE_ID);
+    apiConfigObject.put(CONFIG_FILE_API_CLIENT_ID_KEY, DEFAULT_CONFIG_API_CLIENT_ID);
     apiConfigObject.put(
         CONFIG_FILE_API_CLIENT_TIMEOUT_KEY, DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS);
     apiConfigObject.put(CONFIG_FILE_API_FILE_SIZE_KEY, DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB);
