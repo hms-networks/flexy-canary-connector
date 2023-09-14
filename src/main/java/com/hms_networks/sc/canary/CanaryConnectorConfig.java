@@ -175,7 +175,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
   public static final String DEFAULT_CONFIG_API_USERNAME = "<USER-NAME>";
 
   /**
-   * Default value for the API username in the configuration file.
+   * Default value for the API client ID in the configuration file.
    *
    * @since 1.0.0
    */
