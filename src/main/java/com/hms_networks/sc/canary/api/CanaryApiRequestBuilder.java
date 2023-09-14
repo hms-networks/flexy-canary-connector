@@ -3,7 +3,7 @@ package com.hms_networks.sc.canary.api;
 import com.hms_networks.americas.sc.extensions.json.JSONArray;
 import com.hms_networks.americas.sc.extensions.json.JSONObject;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUnit;
-import com.hms_networks.sc.canary.CanaryConnectorConfig;
+import com.hms_networks.sc.canary.CanaryConnectorMain;
 import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
 
 /**
@@ -149,25 +149,6 @@ public class CanaryApiRequestBuilder {
       "Content-Type=application/json&X-Requested-With=JSONHttpRequest";
 
   /**
-   * Connector config that is passed into the request builder for use.
-   *
-   * @since 1.0.0
-   */
-  private static CanaryConnectorConfig connectorConfig = null;
-
-  /**
-   * Set up a request builder object for later use. This method must be called at the beginning of
-   * the connector.
-   *
-   * @param connectorConfiguration the connector config that is passed into the request builder for
-   *     use
-   * @since 1.0.0
-   */
-  public static void setupConfig(CanaryConnectorConfig connectorConfiguration) {
-    connectorConfig = connectorConfiguration;
-  }
-
-  /**
    * Get the request to store data to the api.
    *
    * @return the {@link RequestInfo} object containing the keep alive request
@@ -240,8 +221,10 @@ public class CanaryApiRequestBuilder {
   public static RequestInfo getUserTokenRequest() {
     String url = getApiBase() + API_ENDPOINT_GET_USER_TOKEN;
     JSONObject requestBodyJson = new JSONObject();
-    requestBodyJson.putNonNull(JSON_KEY_USERNAME, connectorConfig.getApiUsername());
-    requestBodyJson.putNonNull(JSON_KEY_USER_PASSWORD, connectorConfig.getApiUserPassword());
+    requestBodyJson.putNonNull(
+        JSON_KEY_USERNAME, CanaryConnectorMain.getConnectorConfig().getApiUsername());
+    requestBodyJson.putNonNull(
+        JSON_KEY_USER_PASSWORD, CanaryConnectorMain.getConnectorConfig().getApiUserPassword());
     return new RequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
@@ -257,16 +240,20 @@ public class CanaryApiRequestBuilder {
     JSONObject requestBodyJson = new JSONObject();
     requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
     JSONArray historians = new JSONArray();
-    historians.put(connectorConfig.getApiHistorianServerName());
+    historians.put(CanaryConnectorMain.getConnectorConfig().getApiHistorianServerName());
     requestBodyJson.putNonNull(JSON_KEY_HISTORIANS, historians);
-    requestBodyJson.putNonNull(JSON_KEY_CLIENT_ID, connectorConfig.getApiHistorianServerName());
+    requestBodyJson.putNonNull(
+        JSON_KEY_CLIENT_ID, CanaryConnectorMain.getConnectorConfig().getApiHistorianServerName());
     JSONObject settings = new JSONObject();
     settings.putNonNull(
         JSON_KEY_CLIENT_TIMEOUT,
-        SCTimeUnit.SECONDS.toMillis(connectorConfig.getApiClientTimeoutSeconds()));
-    settings.putNonNull(JSON_KEY_FILE_SIZE, connectorConfig.getApiClientFileSize());
+        SCTimeUnit.SECONDS.toMillis(
+            CanaryConnectorMain.getConnectorConfig().getApiClientTimeoutSeconds()));
     settings.putNonNull(
-        JSON_KEY_AUTO_CREATE_DATASETS, connectorConfig.getApiClientAutoCreateDatasets());
+        JSON_KEY_FILE_SIZE, CanaryConnectorMain.getConnectorConfig().getApiClientFileSize());
+    settings.putNonNull(
+        JSON_KEY_AUTO_CREATE_DATASETS,
+        CanaryConnectorMain.getConnectorConfig().getApiClientAutoCreateDatasets());
     requestBodyJson.putNonNull(JSON_KEY_SETTINGS, settings);
     return new RequestInfo(url, HEADERS, requestBodyJson.toString());
   }
@@ -278,6 +265,9 @@ public class CanaryApiRequestBuilder {
    * @since 1.0.0
    */
   private static String getApiBase() {
-    return connectorConfig.getApiUrl() + API_PATH + connectorConfig.getSenderApiVersion() + "/";
+    return CanaryConnectorMain.getConnectorConfig().getApiUrl()
+        + API_PATH
+        + CanaryConnectorMain.getConnectorConfig().getSenderApiVersion()
+        + "/";
   }
 }

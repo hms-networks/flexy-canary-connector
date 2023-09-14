@@ -2,7 +2,6 @@ package com.hms_networks.sc.canary;
 
 import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
-import com.hms_networks.sc.canary.api.CanaryApiRequestBuilder;
 import com.hms_networks.sc.canary.api.CanaryDataPosterThread;
 import com.hms_networks.sc.canary.api.SessionManager;
 import com.hms_networks.sc.canary.data.CanaryDataPayloadManager;
@@ -120,7 +119,6 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public boolean connectorStartUp() {
-    CanaryApiRequestBuilder.setupConfig(connectorConfig);
     dataThread = new CanaryDataPosterThread();
     dataThread.start();
 
