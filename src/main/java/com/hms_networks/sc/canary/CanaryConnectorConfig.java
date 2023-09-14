@@ -398,6 +398,33 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
   }
 
   /**
+   * Get the API client ID from the configuration.
+   *
+   * @return API client id
+   * @since 1.0.0
+   */
+  public String getApiClientId() {
+    String apiClientId = DEFAULT_CONFIG_API_CLIENT_ID;
+
+    try {
+      if (getConnectorConfigurationObject()
+          .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+          .has(CONFIG_FILE_API_CLIENT_ID_KEY)) {
+        apiClientId =
+            getConnectorConfigurationObject()
+                .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+                .getString(CONFIG_FILE_API_CLIENT_ID_KEY);
+      } else {
+        logMissingField(CONFIG_FILE_API_CLIENT_ID_KEY, DEFAULT_CONFIG_API_CLIENT_ID);
+      }
+    } catch (Exception e) {
+      logFailedField(CONFIG_FILE_API_CLIENT_ID_KEY, DEFAULT_CONFIG_API_CLIENT_ID, e);
+    }
+
+    return apiClientId;
+  }
+
+  /**
    * Get the sender API version number from the configuration.
    *
    * @return sender API version number
