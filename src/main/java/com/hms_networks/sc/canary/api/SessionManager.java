@@ -13,10 +13,10 @@ import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
 public class SessionManager {
 
   /** Token for the current or last used canary api session */
-  private static String currentSessionToken;
+  private static String currentSessionToken = "";
 
   /** Token for the current or last used canary api user */
-  private static String currentUserToken;
+  private static String currentUserToken = "";
 
   /** Each successful request or keep alive will refresh this value */
   private static long sessionTokenLastKeepAliveExpirationMillis = -1;
