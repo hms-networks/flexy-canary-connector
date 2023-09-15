@@ -30,6 +30,9 @@ public class AbstractConnectorMainConstants {
   /** The Ewon SCB (System Control Block) key for accessing the serial number of the Ewon. */
   public static final String SCB_ITEM_KEY_SERIAL_NUMBER = "SERNUM";
 
+  /** The directory path for storing certificates used by HTTP. */
+  public static final String HTTP_CERTIFICATE_DIRECTORY_PATH = "/usr/connectorCertificates/";
+
   // endregion
 
   // region: Data Polling Constants
