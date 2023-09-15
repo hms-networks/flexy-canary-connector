@@ -376,6 +376,16 @@ public abstract class AbstractConnectorMain {
     Logger.LOG_CRITICAL("Initializing " + connectorFriendlyName + "...");
     boolean initializeSuccess = true;
 
+    // Load any HTTP certificates if they are present
+    try {
+      SCHttpUtility.setHttpCertificatePath(
+          AbstractConnectorMainConstants.HTTP_CERTIFICATE_DIRECTORY_PATH);
+    } catch (Exception e) {
+      Logger.LOG_CRITICAL("Failed to set Ewon HTTP certificate directory!");
+      Logger.LOG_EXCEPTION(e);
+      initializeSuccess = false;
+    }
+
     // Load Ewon serial number
     try {
       ewonSerialNumber =
