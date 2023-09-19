@@ -109,11 +109,18 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public boolean connectorStartUp() {
-    dataThread = new CanaryDataPosterThread();
-    dataThread.start();
+    boolean startupSuccess = true;
 
-    // TODO: Implement connector startup steps (return true for now)
-    return true;
+    // Start data poster thread
+    try {
+      dataThread = new CanaryDataPosterThread();
+      dataThread.start();
+    } catch (Exception e) {
+      startupSuccess = false;
+      Logger.LOG_CRITICAL("Unable to start data poster thread.", e);
+    }
+
+    return startupSuccess;
   }
 
   /**
