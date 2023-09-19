@@ -258,10 +258,11 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   }
 
   /**
-   * TODO: Implement method javadocs. It is probably also worth looking in to whether this method
-   * should throw an exception if instance is null.
+   * Gets the instance of the connector main class. This method is used to access the connector
+   * instance from other classes.
    *
-   * @return
+   * @return the instance of the connector main class
+   * @since 1.0.0
    */
   public static CanaryConnectorMain getInstance() {
     return instance;
