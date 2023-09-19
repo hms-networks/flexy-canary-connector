@@ -24,9 +24,6 @@ public class SessionManager {
   /** Send the keep alive this many milliseconds before the session token expires */
   private static final int BEFORE_EXPIRE_REFRESH_DURATION_MILLIS = 8000;
 
-  /** Constructor for the session handle class. */
-  public SessionManager() {}
-
   /**
    * This method should be called to refresh the Canary API tokens before the last token has
    * expired.

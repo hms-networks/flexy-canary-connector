@@ -44,13 +44,6 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
   private static CanaryConnectorMain instance = null;
 
   /**
-   * Session manager for Canary API.
-   *
-   * @since 1.0.0
-   */
-  private SessionManager sessionManager = null;
-
-  /**
    * Configuration object for the connector.
    *
    * @since 1.0.0
@@ -101,10 +94,7 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    * @since 1.0.0
    */
   public boolean connectorInitialize() {
-    // Build session manager
-    sessionManager = new SessionManager();
-
-    // TODO: Implement connector initialization steps (return true for now)
+    // Currently no connector initialization steps (return true for now)
     return true;
   }
 
@@ -268,17 +258,6 @@ public class CanaryConnectorMain extends AbstractConnectorMain {
    */
   public static CanaryConnectorMain getInstance() {
     return instance;
-  }
-
-  /**
-   * Gets the session manager for the connector instance.
-   *
-   * @return the session manager for the connector instance
-   * @see #getInstance()
-   * @since 1.0.0
-   */
-  public static SessionManager getSessionManager() {
-    return getInstance().sessionManager;
   }
 
   /**
