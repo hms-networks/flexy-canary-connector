@@ -27,6 +27,9 @@ public class CanaryDataPosterThread extends Thread {
    * @since 1.0.0
    */
   public void run() {
+    // Get thread sleep time from the config
+    final long sleepTimeMs = CanaryConnectorMain.getConnectorConfig().getQueueDataPostRateMillis();
+
     while (sendDataControl) {
 
       RequestInfo request = CanaryDataPayloadManager.getNextPayload();
@@ -50,8 +53,6 @@ public class CanaryDataPosterThread extends Thread {
       // thread finished
       Thread.yield();
       try {
-        final long sleepTimeMs =
-            CanaryConnectorMain.getConnectorConfig().getQueueDataPostRateMillis();
         Thread.sleep(sleepTimeMs);
       } catch (InterruptedException e) {
         Logger.LOG_SERIOUS(
