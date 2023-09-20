@@ -11,6 +11,7 @@ import com.hms_networks.americas.sc.extensions.system.http.SCHttpUtility;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUnit;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUtils;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -378,6 +379,11 @@ public abstract class AbstractConnectorMain {
 
     // Load any HTTP certificates if they are present
     try {
+      File certificateFolder =
+          new File(AbstractConnectorMainConstants.HTTP_CERTIFICATE_DIRECTORY_PATH);
+      if (!certificateFolder.exists()) {
+        certificateFolder.mkdir();
+      }
       SCHttpUtility.setHttpCertificatePath(
           AbstractConnectorMainConstants.HTTP_CERTIFICATE_DIRECTORY_PATH);
     } catch (Exception e) {
