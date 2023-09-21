@@ -6,6 +6,7 @@ import com.ewon.ewonitf.SysControlBlock;
 import com.ewon.ewonitf.TagControl;
 import com.hms_networks.americas.sc.extensions.historicaldata.HistoricalDataQueueManager;
 import com.hms_networks.americas.sc.extensions.logging.Logger;
+import com.hms_networks.americas.sc.extensions.system.application.SCAppArgsParser;
 import com.hms_networks.americas.sc.extensions.system.application.SCAppManagement;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpUtility;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
@@ -371,11 +372,15 @@ public abstract class AbstractConnectorMain {
   /**
    * Method for performing connector application initialization steps.
    *
+   * @param args program arguments
    * @since 1.0.0
    */
-  private boolean initialize() {
+  private boolean initialize(String[] args) {
     Logger.LOG_CRITICAL("Initializing " + connectorFriendlyName + "...");
     boolean initializeSuccess = true;
+
+    // Parse arguments
+    SCAppArgsParser argsParser = new SCAppArgsParser(args);
 
     // Load any HTTP certificates if they are present
     try {
@@ -403,15 +408,22 @@ public abstract class AbstractConnectorMain {
       initializeSuccess = false;
     }
 
-    // Start thread for default event manager
-    try {
-      boolean autorun = false;
-      EventHandlerThread eventHandler = new EventHandlerThread(autorun);
-      eventHandler.runEventManagerInThread();
-    } catch (Exception e) {
-      Logger.LOG_CRITICAL("Failed to start default event manager thread!");
-      Logger.LOG_EXCEPTION(e);
-      initializeSuccess = false;
+    // Start thread for default event manager if not started by multi-loader
+    if (!argsParser.getStartedByMultiLoader()) {
+      try {
+        boolean autorun = false;
+        EventHandlerThread eventHandler = new EventHandlerThread(autorun);
+        eventHandler.runEventManagerInThread();
+      } catch (Exception e) {
+        Logger.LOG_CRITICAL("Failed to start default event manager thread!");
+        Logger.LOG_EXCEPTION(e);
+        initializeSuccess = false;
+      }
+    } else {
+      Logger.LOG_DEBUG(
+          connectorFriendlyName
+              + " was started by the multi-loader application or in a multi-execution context. "
+              + "Skipping default event handler thread initialization.");
     }
 
     // Calculate local time offset and configure queue
@@ -446,8 +458,15 @@ public abstract class AbstractConnectorMain {
       initializeSuccess = false;
     }
 
-    // Enable application auto restart
-    isAppAutoRestartEnabled = SCAppManagement.enableAppAutoRestart();
+    // Configure auto-restart if not started by multi-loader
+    if (!argsParser.getStartedByMultiLoader()) {
+      SCAppManagement.enableAppAutoRestart();
+    } else {
+      Logger.LOG_DEBUG(
+          connectorFriendlyName
+              + " was started by the multi-loader application or in a multi-execution context. "
+              + "Skipping auto-restart configuration.");
+    }
 
     // Load configuration file
     try {
@@ -813,7 +832,7 @@ public abstract class AbstractConnectorMain {
    */
   public void connectorMain(String[] args) {
     // Initialize connector
-    boolean initialized = initialize();
+    boolean initialized = initialize(args);
 
     // Start connector if initialization was successful
     boolean startedUp = false;
