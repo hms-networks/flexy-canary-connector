@@ -244,7 +244,7 @@ public class CanaryApiRequestBuilder {
     historians.put(CanaryConnectorMain.getConnectorConfig().getApiHistorianServerName());
     requestBodyJson.putNonNull(JSON_KEY_HISTORIANS, historians);
     requestBodyJson.putNonNull(
-        JSON_KEY_CLIENT_ID, CanaryConnectorMain.getConnectorConfig().getApiHistorianServerName());
+        JSON_KEY_CLIENT_ID, CanaryConnectorMain.getConnectorConfig().getApiClientId());
     JSONObject settings = new JSONObject();
     settings.putNonNull(
         JSON_KEY_CLIENT_TIMEOUT,
