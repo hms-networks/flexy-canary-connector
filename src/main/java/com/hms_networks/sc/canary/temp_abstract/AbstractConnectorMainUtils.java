@@ -104,8 +104,6 @@ public class AbstractConnectorMainUtils {
             AbstractConnectorMainConstants.CONNECTOR_DATA_POLLING_DISABLE_TAG_TYPE);
         connectorDataPollingDisableTag =
             new TagControl(AbstractConnectorMainConstants.CONNECTOR_DATA_POLLING_DISABLE_TAG_NAME);
-        connectorDataPollingDisableTag.setTagValueAsInt(
-            AbstractConnectorMainConstants.CONNECTOR_DATA_POLLING_DISABLE_TAG_DISABLE_VALUE);
         Logger.LOG_INFO(
             "Created `"
                 + AbstractConnectorMainConstants.CONNECTOR_DATA_POLLING_DISABLE_TAG_NAME
