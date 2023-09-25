@@ -90,7 +90,14 @@ If multiple historians are in use, names should be in a comma separated list.
 Parameter to configure the ID to be used as the dataset name for data coming from this device.
 
 :::note
-It is recommended to use the device name as the ApiClientId.
+This is an optional parameter.
+If not specified, the device name will be automatically generated using the Ewon's serial number,
+using the following format:
+```
+"Flexy-<SERIAL-NUMBER>"
+```
+
+It is recommended to use the device name as the ApiClientId when defining this parameter.
 :::
 
 ##### ApiClientTimeoutSeconds
