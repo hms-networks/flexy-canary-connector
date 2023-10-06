@@ -1,9 +1,12 @@
 import ScDocusaurusConfig from "@site/ScDocusaurusConfig.js";
+import Popover from '@site/src/components/HomepageFeatures/popover.js';
 import LoggingPartial from '@site/docs/_partial/_logging.mdx';
 import ConfigurationJsonPartial from '@site/docs/_partial/_configuration_json.mdx';
 import GreenCheckMark from '@site/static/img/green-check-icon-cc0v1.webp';
 import EwonAddTag from '@site/static/img/setup/add-tag.gif';
 import EwonModifyTag from '@site/static/img/setup/modify-tag.gif';
+import EwonWebPageHome from '@site/static/img/ewon-web-page-home.webp';
+import EwonTagConfigPageHistLogging from '@site/static/img/ewon-tag-config-page-hist-logging.webp';
 
 
 #### Ewon Configuration
@@ -13,48 +16,81 @@ guides.
 Documentation, installation guides, and more for the Ewon Flexy can be found
 at [https://websupport.ewon.biz/support](https://websupport.ewon.biz/support).
 
-<>In addition to the standard Ewon Flexy documentation, follow these additional steps to prepare the Ewon for use with
-the {ScDocusaurusConfig.title}.</><br/>
+<>In addition to the standard Ewon Flexy documentation, follow these additional steps to prepare the
+Ewon for use with the {ScDocusaurusConfig.title}.</><br/>
 
-##### Setup Historical Logging for Tags
+###### I. Setup Historical Logging for Tags
 
-To enable telemetry data on a new tag, a tag can be created as shown below:
-
+:::note Animations
+<Popover label="View steps for new tags">
 <img src={EwonAddTag} alt="Ewon add tag" width="750"/>
+</Popover>
 
-To enable telemetry data on an existing tag, a tag can be modified as shown below:
-
+<Popover label="View steps for existing tags">
 <img src={EwonModifyTag} alt="Ewon modify tag" width="750"/>
+</Popover>
+:::
 
-###### Instructions
+###### Step 1
 
-1. Open the Ewon web page.
-1. Navigate to the `Values` page (On the left-hand menu, click `Tags` > `Values`).
-1. Change the `MODE` to `Setup`.
-1. For each tag that requires logged data, double-click the tag to open the `Tag configuration` menu.
-      1. Scroll down to the `Historical Logging` section and check the `Historical Logging Enabled` checkbox.
-      1. In the same `Historical Logging` section, enable either deadband or interval logging.
+Open the Ewon web page.
 
-        :::info Deadband Logging
+<img src={EwonWebPageHome} alt="Ewon web page home" width="750"/>
 
-        The Logging Deadband field triggers logging when the tag's value changes by a particular amount.
-        For example, a logging deadband of 2 means that a tag will be logged when the value changes by 2 or more.
-        A negative value in the logging deadband field disables logging on value change.
+###### Step 2
 
-        :::
-        :::info Interval Logging
+Navigate to the `Values` page (On the left-hand menu, click `Tags` > `Values`).
 
-        The Logging Interval field triggers time-based logging.
-        For example, a logging interval of 60 means that the tag will be logged every 60 seconds.
-        A logging interval of zero (0) disables time-based logging.
+###### Step 3
 
-        :::
+Change the `MODE` to `Setup`.
 
-      1. Once configured, click `Update Tag` on the bottom right of the page.
+###### Step 4
 
-Once changes have been saved, you may proceed to the [next section](setup/download)
+For each tag that requires logged data, double-click the tag to open the `Tag configuration` menu.
+
+###### Step 4a
+
+Scroll down to the `Historical Logging` section and check the `Historical Logging Enabled` checkbox.
+
+###### Step 4b
+
+In the same `Historical Logging` section, enable either deadband or interval logging.
+
+:::info Deadband Logging
+
+The Logging Deadband field triggers logging when the tag's value changes by a particular amount.
+For example, a logging deadband of 2 means that a tag will be logged when the value changes by 2 or
+more.
+A negative value in the logging deadband field disables logging on value change.
+
+:::
+:::info Interval Logging
+
+The Logging Interval field triggers time-based logging.
+For example, a logging interval of 60 means that the tag will be logged every 60 seconds.
+A logging interval of zero (0) disables time-based logging.
+
+:::
+
+###### Step 4c
+
+Once configured, click `Update Tag` on the bottom right of the page.
+
+<img src={EwonTagConfigPageHistLogging} alt="Ewon Tag Configuration Page" width="750"/>
+
+###### Step 5
+
+Once all tags have been configured, you may proceed to the [next section](#connector-configuration).
 
 <img src={GreenCheckMark} alt="Green completion checkmark" width="100"/>
+
+:::tip
+
+You may change the `MODE` back to `View` to see the tag values once you are done configuring the
+tags.
+
+:::
 
 #### Connector Configuration
 
