@@ -89,12 +89,21 @@ If multiple historians are in use, names should be in a comma separated list.
 ##### ApiClientId
 Parameter to configure the ID to be used as the dataset name for data coming from this device.
 
+The following variables can be used in this parameter:
+- %SERIALNO% - The serial number of the Ewon Flexy
+- %EWONNAME% - The device name of the Ewon Flexy
+
+For example, the following would be a valid ApiClientId:
+```
+"Flexy-%SERIALNO%"
+```
+
 :::note
 This is an optional parameter.
 If not specified, the device name will be automatically generated using the Ewon's serial number,
 using the following format:
 ```
-"Flexy-<SERIAL-NUMBER>"
+"Flexy-%SERIALNO%"
 ```
 
 It is recommended to use the device name as the ApiClientId when defining this parameter.
