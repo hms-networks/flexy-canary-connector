@@ -1,5 +1,6 @@
 package com.hms_networks.sc.canary.temp_abstract;
 
+import com.ewon.ewonitf.SysControlBlock;
 import com.hms_networks.americas.sc.extensions.historicaldata.HistoricalDataQueueManager;
 import com.hms_networks.americas.sc.extensions.logging.Logger;
 import java.io.File;
@@ -29,6 +30,12 @@ public class AbstractConnectorMainConstants {
 
   /** The Ewon SCB (System Control Block) key for accessing the serial number of the Ewon. */
   public static final String SCB_ITEM_KEY_SERIAL_NUMBER = "SERNUM";
+
+  /** The Ewon SCB (System Control Block) key for accessing the device name of the Ewon. */
+  public static final String SCB_ITEM_KEY_DEVICE_NAME = "Identification";
+
+  /** The Ewon SCB (System Control Block) type for accessing the device name of the Ewon. */
+  public static final int SCB_ITEM_TYPE_DEVICE_NAME = SysControlBlock.SYS;
 
   /** The directory path for storing certificates used by HTTP. */
   public static final String HTTP_CERTIFICATE_DIRECTORY_PATH = "/usr/connectorCertificates/";
