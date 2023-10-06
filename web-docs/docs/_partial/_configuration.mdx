@@ -104,6 +104,57 @@ is shown below:
 
 <ConfigurationJsonPartial />
 
+##### I. Populate the Configuration File
+
+###### Step 1
+
+Open an FTP connection to the target Ewon device.
+
+###### Step 2
+
+Navigate to the /usr folder on the Ewon device's file system.
+
+###### Step 3
+
+Open the previously uploaded "CanaryConnectorConfig.json" file for editing.
+
+:::info
+
+Depending on the FTP client used, you may need to download the file to your local machine to edit
+it.
+Once edited, you may upload the file back to the Ewon device.
+
+:::
+
+###### Step 4
+
+Populate the configuration file with the required fields. See the [Configuration](#configuration)
+section for more information.
+
+###### Step 5
+
+Save the file and close the FTP connection.
+
+:::info
+
+If you previously downloaded the configuration file to your local machine for editing in steps 3-4,
+you will need to upload the file back to the Ewon device to save the changes.
+
+:::
+
+###### Step 6
+
+Restart the Ewon Flexy device to apply the configuration changes to the connector.
+
+###### Step 7
+
+Once the Ewon Flexy has restarted, the configuration process is complete and the connector will
+begin sending data to the configured Canary server.
+
+<img src={GreenCheckMark} alt="Green completion checkmark" width="100"/>
+
+##### II. Configuration File Fields
+
 ### General
 This section contains configuration fields which are used to configure the connector.
 
