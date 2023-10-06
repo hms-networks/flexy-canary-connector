@@ -420,7 +420,7 @@ public abstract class AbstractConnectorMain {
     // Load Ewon serial number
     try {
       ewonSerialNumber =
-          new SysControlBlock(SysControlBlock.INF)
+          new SysControlBlock(AbstractConnectorMainConstants.SCB_ITEM_TYPE_SERIAL_NUMBER)
               .getItem(AbstractConnectorMainConstants.SCB_ITEM_KEY_SERIAL_NUMBER);
     } catch (Exception e) {
       Logger.LOG_CRITICAL("Failed to load Ewon serial number!");
