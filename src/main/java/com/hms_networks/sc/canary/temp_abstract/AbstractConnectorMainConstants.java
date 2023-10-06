@@ -31,6 +31,9 @@ public class AbstractConnectorMainConstants {
   /** The Ewon SCB (System Control Block) key for accessing the serial number of the Ewon. */
   public static final String SCB_ITEM_KEY_SERIAL_NUMBER = "SERNUM";
 
+  /** The Ewon SCB (System Control Block) type for accessing the serial number of the Ewon. */
+  public static final int SCB_ITEM_TYPE_SERIAL_NUMBER = SysControlBlock.INF;
+
   /** The Ewon SCB (System Control Block) key for accessing the device name of the Ewon. */
   public static final String SCB_ITEM_KEY_DEVICE_NAME = "Identification";
 
