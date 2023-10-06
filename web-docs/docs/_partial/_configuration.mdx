@@ -1,4 +1,6 @@
 import ScDocusaurusConfig from "@site/ScDocusaurusConfig.js";
+import LoggingPartial from '@site/docs/_partial/_logging.mdx';
+import ConfigurationJsonPartial from '@site/docs/_partial/_configuration_json.mdx';
 import GreenCheckMark from '@site/static/img/green-check-icon-cc0v1.webp';
 import EwonAddTag from '@site/static/img/setup/add-tag.gif';
 import EwonModifyTag from '@site/static/img/setup/modify-tag.gif';
@@ -53,3 +55,151 @@ To enable telemetry data on an existing tag, a tag can be modified as shown belo
 Once changes have been saved, you may proceed to the [next section](setup/download)
 
 <img src={GreenCheckMark} alt="Green completion checkmark" width="100"/>
+
+#### Connector Configuration
+
+The connector configuration is a JSON file stored in the Ewon /usr/ directory with the filename
+"CanaryConnectorConfig.json".
+To make any configuration changes, modify CanaryConnectorConfig.json and ensure changes are saved
+to the /usr/ directory of the Ewon Flexy.
+
+If no configuration file is detected, a default configuration file will be generated to match what
+is shown below:
+
+<ConfigurationJsonPartial />
+
+### General
+This section contains configuration fields which are used to configure the connector.
+
+#### LogLevel
+Parameter to configure the logging level used in the Ewon Flexy's realtime logs.
+<LoggingPartial/>
+
+#### QueueEnableDiagnosticTags
+Parameter to enable and monitor a set of diagnostic tags for the historical data queue.
+These tags are automatically created and are used to monitor the health of the historical data queue
+by displaying a heartbeat with the number of times the queue has been accessed, a trigger to reset
+the
+queue time tracker, and the number of seconds which the queue is running behind by.
+
+#### QueueEnableStringHistory
+Parameter to configure if string history data should be retrieved from the queue.
+String history requires an additional EBD call in the underlying queue library, and will take extra
+processing time, especially in installations with large string tag counts.
+
+#### Utf8StringSupport
+Parameter to enable support for tag names with UTF-8 encoded characters.
+
+#### QueueDataPollSizeMins
+Parameter to configure the data poll size (in minutes) of each data queue poll.
+Changing this will modify the amount of data checked during each poll interval.
+
+#### QueueDataPollIntervalMillis
+Parameter to configure the maximum speed that the historical data be polled for new data points to
+send.
+
+#### QueueDataAggregationPeriodSecs
+Parameter to configure the aggregation period (in seconds) for data points processed from the
+historical data queue.
+
+:::note
+A value of "-1" indicates that data aggregation is disabled.
+:::
+
+#### QueueDataPollWarnBehindTimeMins
+Parameter to configure how many milliseconds the data queue will be able to fall behind real time
+before warnings are logged.
+
+#### QueueDataPollMaxBehindTimeMins
+Parameter to configure the data poll maximum behind time (in minutes).
+Changing this will modify the maximum number of minutes which the historical queue data polling may
+be running behind by.
+
+:::note
+A value of -1 disables this functionality.
+:::
+
+### Canary
+This section contains configuration fields which are used to configure the connection to Canary.
+
+#### API
+This section contains configuration fields which are used to configure the API connection.
+
+##### Url
+Parameter to configure the URL in the following format:
+```
+"https://<USER-DOMAIN>:<PORT_NUM>/"
+```
+
+##### SenderApiVersionNumber
+Parameter to configure the sender API version number.
+
+##### ReceiverApiVersionNumber
+Parameter to configure the receiver API version number.
+
+##### HistorianServerName
+Parameter to configure the name for the historian(s) where data will be stored.
+
+:::note
+If multiple historians are in use, names should be in a comma separated list.
+:::
+
+##### ApiClientId
+Parameter to configure the ID to be used as the dataset name for data coming from this device.
+
+The following variables can be used in this parameter:
+- %SERIALNO% - The serial number of the Ewon Flexy
+- %EWONNAME% - The device name of the Ewon Flexy
+
+For example, the following would be a valid ApiClientId:
+```
+"Flexy-%SERIALNO%"
+```
+
+:::note
+This is an optional parameter.
+If not specified, the device name will be automatically generated using the Ewon's serial number,
+using the following format:
+```
+"Flexy-%SERIALNO%"
+```
+
+It is recommended to use the device name as the ApiClientId when defining this parameter.
+:::
+
+##### ApiClientTimeoutSeconds
+Parameter to configure the timeout time in seconds for the API session token.
+
+:::note
+It is recommended to use a large timeout to allow the session to be maintained.
+
+600 seconds would be an appropriate value.
+:::
+
+##### FileSizeMegabytes
+Parameter to configure the number of megabytes a Canary Historical Database (HBD) file can grow to
+before the it rolls over.
+
+##### AutoCreateDatasets
+Parameter to configure if the historian should create new datasets for tags that specify
+datasets that do not exist in the historian.
+
+##### QueueDataPostRateMillis
+Parameter to configure the maximum data post rate in milliseconds.
+
+#### Auth
+This section contains configuration fields which are used to configure the authentication.
+
+##### UserName
+Parameter to configure the user name for authentication against the Canary API endpoint.
+
+:::note
+This is a required parameter.
+:::
+
+##### UserPassword
+Parameter to configure the user password for authentication against the Canary API endpoint.
+
+:::note
+This is a required parameter.
+:::
