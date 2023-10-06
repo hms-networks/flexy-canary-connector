@@ -1,0 +1,29 @@
+import GreenCheckMark from '@site/static/img/green-check-icon-cc0v1.webp';
+
+#### Step 1
+
+Open an FTP connection to the target Ewon device.
+
+#### Step 2
+
+Navigate to the /usr folder on the Ewon device's file system.
+
+#### Step 3
+
+Upload the downloaded connector files to the /usr folder.
+
+- `flexy-canary-connector-A.B.C-full.jar` where A.B.C are the connector version numbers
+- `jvmrun`
+- `CanaryConnectorConfig.json`
+
+##### Step 3a
+
+If you have configured the connector to use a custom certificate, you will also need to upload the
+certificate file (public key) to the /usr/connectorCertificates folder.
+
+#### Step 4
+
+Once the files have been uploaded, you may close the FTP connection and proceed to
+the next section.
+
+<img src={GreenCheckMark} alt="Green check mark" width="100"/>
