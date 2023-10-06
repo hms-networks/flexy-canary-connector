@@ -1,12 +1,13 @@
+import CodeBlock from '@theme/CodeBlock';
 import ScDocusaurusConfig from "@site/ScDocusaurusConfig.js";
 import Popover from '@site/src/components/HomepageFeatures/popover.js';
 import LoggingPartial from '@site/docs/_partial/_logging.mdx';
-import ConfigurationJsonPartial from '@site/docs/_partial/_configuration_json.mdx';
 import GreenCheckMark from '@site/static/img/green-check-icon-cc0v1.webp';
 import EwonAddTag from '@site/static/img/setup/add-tag.gif';
 import EwonModifyTag from '@site/static/img/setup/modify-tag.gif';
 import EwonWebPageHome from '@site/static/img/ewon-web-page-home.webp';
 import EwonTagConfigPageHistLogging from '@site/static/img/ewon-tag-config-page-hist-logging.webp';
+import DefaultConfigJson from '!!raw-loader!../../../starting-files/CanaryConnectorConfig.json';
 
 
 #### Ewon Configuration
@@ -98,11 +99,6 @@ The connector configuration is a JSON file stored in the Ewon /usr/ directory wi
 "CanaryConnectorConfig.json".
 To make any configuration changes, modify CanaryConnectorConfig.json and ensure changes are saved
 to the /usr/ directory of the Ewon Flexy.
-
-If no configuration file is detected, a default configuration file will be generated to match what
-is shown below:
-
-<ConfigurationJsonPartial />
 
 ##### I. Populate the Configuration File
 
@@ -290,3 +286,10 @@ Parameter to configure the user password for authentication against the Canary A
 :::note
 This is a required parameter.
 :::
+
+##### III. Default Configuration File
+
+If no configuration file is detected, a default configuration file will be generated to match what
+is shown below:
+
+<CodeBlock>{DefaultConfigJson}</CodeBlock>
