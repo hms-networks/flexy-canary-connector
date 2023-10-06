@@ -9,6 +9,7 @@ import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.system.application.SCAppArgsParser;
 import com.hms_networks.americas.sc.extensions.system.application.SCAppManagement;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpUtility;
+import com.hms_networks.americas.sc.extensions.system.info.SCSystemInfo;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUnit;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUtils;
@@ -80,6 +81,14 @@ public abstract class AbstractConnectorMain {
    * @since 1.0.0
    */
   private String ewonSerialNumber;
+
+  /**
+   * The device name of the host Ewon device. This value may be used for various purposes, including
+   * as an identifier for the specific connector instance(s)/installation(s).
+   *
+   * @since 1.0.0
+   */
+  private String ewonDeviceName;
 
   /**
    * The boolean flag indicating whether the connector is running. This flag is used to exit the
@@ -193,6 +202,17 @@ public abstract class AbstractConnectorMain {
    */
   public String getEwonSerialNumber() {
     return ewonSerialNumber;
+  }
+
+  /**
+   * Gets the device name of the host Ewon device. This value may be used for various purposes,
+   * including as an identifier for the specific connector instance(s)/installation(s).
+   *
+   * @return the device name of the host Ewon device
+   * @since 1.0.0
+   */
+  public String getEwonDeviceName() {
+    return ewonDeviceName;
   }
 
   /**
@@ -404,6 +424,15 @@ public abstract class AbstractConnectorMain {
               .getItem(AbstractConnectorMainConstants.SCB_ITEM_KEY_SERIAL_NUMBER);
     } catch (Exception e) {
       Logger.LOG_CRITICAL("Failed to load Ewon serial number!");
+      Logger.LOG_EXCEPTION(e);
+      initializeSuccess = false;
+    }
+
+    // Load Ewon device name
+    try {
+      ewonDeviceName = SCSystemInfo.getEwonName();
+    } catch (Exception e) {
+      Logger.LOG_CRITICAL("Failed to load Ewon device name!");
       Logger.LOG_EXCEPTION(e);
       initializeSuccess = false;
     }
