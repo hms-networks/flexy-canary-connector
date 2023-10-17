@@ -1,8 +1,8 @@
 package com.hms_networks.sc.canary.data;
 
 import com.hms_networks.americas.sc.extensions.datapoint.DataPoint;
+import com.hms_networks.americas.sc.extensions.system.http.requests.SCHttpPostRequestInfo;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUtils;
-import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -144,16 +144,16 @@ public class CanaryDataPayloadManager {
   }
 
   /**
-   * Gets the {@link RequestInfo} of the next payload to be sent to the Canary API. This method
-   * returns the {@link RequestInfo} of the next payload to be sent to the Canary API, or null if no
-   * payloads are pending.
+   * Gets the {@link SCHttpPostRequestInfo} of the next payload to be sent to the Canary API. This
+   * method returns the {@link SCHttpPostRequestInfo} of the next payload to be sent to the Canary
+   * API, or null if no payloads are pending.
    *
-   * @return the {@link RequestInfo} of next payload to be sent to the Canary API, or null if no
-   *     payloads are pending
+   * @return the {@link SCHttpPostRequestInfo} of next payload to be sent to the Canary API, or null
+   *     if no payloads are pending
    * @since 1.0.0
    */
-  public static RequestInfo getNextPayload() {
-    RequestInfo nextPayload = null;
+  public static SCHttpPostRequestInfo getNextPayload() {
+    SCHttpPostRequestInfo nextPayload = null;
     if (!dataPayloadsPending.isEmpty()) {
       CanaryDataPayload dataPayload = (CanaryDataPayload) dataPayloadsPending.getFirst();
       nextPayload = dataPayload.getPayload();
@@ -166,8 +166,9 @@ public class CanaryDataPayloadManager {
    * be sent to the Canary API, and returns true if a payload was removed, or false if no payloads
    * are pending.
    *
-   * <p>This method does not return the payload that was removed. The payload {@link RequestInfo}
-   * can be retrieved using the {@link #getNextPayload()} method before calling this method.
+   * <p>This method does not return the payload that was removed. The payload {@link
+   * SCHttpPostRequestInfo} can be retrieved using the {@link #getNextPayload()} method before
+   * calling this method.
    *
    * @return {@code true} if a payload was removed, or {@code false} if no payloads are pending
    * @since 1.0.0

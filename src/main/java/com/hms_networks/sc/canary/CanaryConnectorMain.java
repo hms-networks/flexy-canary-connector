@@ -1,12 +1,12 @@
 package com.hms_networks.sc.canary;
 
+import com.hms_networks.americas.sc.extensions.connectors.framework.AbstractConnectorConfig;
+import com.hms_networks.americas.sc.extensions.connectors.framework.AbstractConnectorMain;
 import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeSpan;
 import com.hms_networks.sc.canary.api.CanaryDataPosterThread;
 import com.hms_networks.sc.canary.api.SessionManager;
 import com.hms_networks.sc.canary.data.CanaryDataPayloadManager;
-import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorConfig;
-import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorMain;
 import java.util.List;
 import java.util.Map;
 

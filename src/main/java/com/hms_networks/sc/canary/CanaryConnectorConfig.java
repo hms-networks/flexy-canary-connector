@@ -1,11 +1,11 @@
 package com.hms_networks.sc.canary;
 
 import com.hms_networks.americas.sc.extensions.config.exceptions.ConfigFileException;
+import com.hms_networks.americas.sc.extensions.connectors.framework.AbstractConnectorConfig;
 import com.hms_networks.americas.sc.extensions.json.JSONException;
 import com.hms_networks.americas.sc.extensions.json.JSONObject;
 import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.string.StringUtils;
-import com.hms_networks.sc.canary.temp_abstract.AbstractConnectorConfig;
 
 /**
  * Configuration class for the Canary Connector.

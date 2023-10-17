@@ -2,9 +2,9 @@ package com.hms_networks.sc.canary.api;
 
 import com.hms_networks.americas.sc.extensions.json.JSONArray;
 import com.hms_networks.americas.sc.extensions.json.JSONObject;
+import com.hms_networks.americas.sc.extensions.system.http.requests.SCHttpPostRequestInfo;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUnit;
 import com.hms_networks.sc.canary.CanaryConnectorMain;
-import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
 
 /**
  * Class to create request information for specific Canary API requests.
@@ -152,10 +152,10 @@ public class CanaryApiRequestBuilder {
    * Get the request to store data to the api.
    *
    * @param tagData The json object containing all tag data to send
-   * @return the {@link RequestInfo} object containing the keep alive request
+   * @return the {@link SCHttpPostRequestInfo} object containing the keep alive request
    * @since 1.0.0
    */
-  public static RequestInfo getStoreDataRequest(JSONObject tagData) {
+  public static SCHttpPostRequestInfo getStoreDataRequest(JSONObject tagData) {
     // force up-to-date tokens before every request
     SessionManager.sendKeepAliveOrRefreshToken();
 
@@ -164,7 +164,7 @@ public class CanaryApiRequestBuilder {
     requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, SessionManager.getCurrentUserToken());
     requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, SessionManager.getCurrentSessionToken());
     requestBodyJson.putNonNull(JSON_KEY_TVQS, tagData);
-    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
+    return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
@@ -172,15 +172,15 @@ public class CanaryApiRequestBuilder {
    *
    * @param userToken the user token to send with the request
    * @param sessionToken the session token to send with the request
-   * @return the {@link RequestInfo} object containing the keep alive request
+   * @return the {@link SCHttpPostRequestInfo} object containing the keep alive request
    * @since 1.0.0
    */
-  public static RequestInfo getKeepAliveRequest(String userToken, String sessionToken) {
+  public static SCHttpPostRequestInfo getKeepAliveRequest(String userToken, String sessionToken) {
     String url = getApiBase() + API_ENDPOINT_KEEP_ALIVE;
     JSONObject requestBodyJson = new JSONObject();
     requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
     requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, sessionToken);
-    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
+    return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
@@ -188,55 +188,56 @@ public class CanaryApiRequestBuilder {
    *
    * @param userToken the user token to send with the request
    * @param sessionToken the session token to send with the request
-   * @return the {@link RequestInfo} object containing the keep alive request
+   * @return the {@link SCHttpPostRequestInfo} object containing the keep alive request
    * @since 1.0.0
    */
-  public static RequestInfo getRevokeSessionTokenRequest(String userToken, String sessionToken) {
+  public static SCHttpPostRequestInfo getRevokeSessionTokenRequest(
+      String userToken, String sessionToken) {
     String url = getApiBase() + API_ENDPOINT_REVOKE_SESSION_TOKEN;
     JSONObject requestBodyJson = new JSONObject();
     requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
     requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, sessionToken);
-    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
+    return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
    * Get the request to revoke a user token for the api.
    *
    * @param userToken the user token to send with the request
-   * @return the {@link RequestInfo} object containing the keep alive request
+   * @return the {@link SCHttpPostRequestInfo} object containing the keep alive request
    * @since 1.0.0
    */
-  public static RequestInfo getRevokeUserTokenRequest(String userToken) {
+  public static SCHttpPostRequestInfo getRevokeUserTokenRequest(String userToken) {
     String url = getApiBase() + API_ENDPOINT_REVOKE_USER_TOKEN;
     JSONObject requestBodyJson = new JSONObject();
     requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
-    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
+    return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
    * Get the request to send a user token request to the api.
    *
-   * @return the {@link RequestInfo} object containing the user token request
+   * @return the {@link SCHttpPostRequestInfo} object containing the user token request
    * @since 1.0.0
    */
-  public static RequestInfo getUserTokenRequest() {
+  public static SCHttpPostRequestInfo getUserTokenRequest() {
     String url = getApiBase() + API_ENDPOINT_GET_USER_TOKEN;
     JSONObject requestBodyJson = new JSONObject();
     requestBodyJson.putNonNull(
         JSON_KEY_USERNAME, CanaryConnectorMain.getConnectorConfig().getApiUsername());
     requestBodyJson.putNonNull(
         JSON_KEY_USER_PASSWORD, CanaryConnectorMain.getConnectorConfig().getApiUserPassword());
-    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
+    return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**
    * Get the request to send a session token request to the api.
    *
    * @param userToken the user token to send with the request
-   * @return the {@link RequestInfo} object containing the session token request
+   * @return the {@link SCHttpPostRequestInfo} object containing the session token request
    * @since 1.0.0
    */
-  public static RequestInfo getSessionTokenRequest(String userToken) {
+  public static SCHttpPostRequestInfo getSessionTokenRequest(String userToken) {
     String url = getApiBase() + API_ENDPOINT_GET_SESSION_TOKEN;
     JSONObject requestBodyJson = new JSONObject();
     requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
@@ -256,7 +257,7 @@ public class CanaryApiRequestBuilder {
         JSON_KEY_AUTO_CREATE_DATASETS,
         CanaryConnectorMain.getConnectorConfig().getApiClientAutoCreateDatasets());
     requestBodyJson.putNonNull(JSON_KEY_SETTINGS, settings);
-    return new RequestInfo(url, HEADERS, requestBodyJson.toString());
+    return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
   }
 
   /**

@@ -10,8 +10,7 @@ import com.hms_networks.americas.sc.extensions.system.http.SCHttpAuthException;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpConnectionException;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpEwonException;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpUnknownException;
-import com.hms_networks.americas.sc.extensions.system.http.SCHttpUtility;
-import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
+import com.hms_networks.americas.sc.extensions.system.http.requests.SCHttpPostRequestInfo;
 import java.io.IOException;
 
 /**
@@ -25,11 +24,11 @@ public class CanaryApiRequestSender {
   /**
    * Send and parse an API POST request with the given information.
    *
-   * @param request the {@link RequestInfo} to hold all request information
+   * @param request the {@link SCHttpPostRequestInfo} to hold all request information
    * @return the status of the request
    * @since 1.0.0
    */
-  public static CanaryApiResponseStatus processRequest(RequestInfo request) {
+  public static CanaryApiResponseStatus processRequest(SCHttpPostRequestInfo request) {
     CanaryApiResponseStatus status;
     String responseBodyString = apiRequest(request);
 
@@ -74,16 +73,16 @@ public class CanaryApiRequestSender {
   /**
    * Send an API POST request with the given information.
    *
-   * @param request {@link RequestInfo} to hold all request information
+   * @param request {@link SCHttpPostRequestInfo} to hold all request information
    * @return true if the request was successful
    * @since 1.0.0
    */
-  private static String apiRequest(RequestInfo request) {
+  private static String apiRequest(SCHttpPostRequestInfo request) {
     String responseBodyString = "";
     String url = request.getUrl();
 
     try {
-      responseBodyString = SCHttpUtility.httpPost(url, request.getHeaders(), request.getBody());
+      responseBodyString = request.doRequest();
       Logger.LOG_INFO(responseBodyString);
     } catch (EWException e) {
       requestHttpsError(e, "Ewon exception during HTTP request to " + url + ".");
