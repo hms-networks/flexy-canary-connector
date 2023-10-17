@@ -10,9 +10,9 @@ import com.hms_networks.americas.sc.extensions.datapoint.DataPointString;
 import com.hms_networks.americas.sc.extensions.json.JSONArray;
 import com.hms_networks.americas.sc.extensions.json.JSONObject;
 import com.hms_networks.americas.sc.extensions.logging.Logger;
+import com.hms_networks.americas.sc.extensions.system.http.requests.SCHttpPostRequestInfo;
 import com.hms_networks.americas.sc.extensions.system.time.SCTimeUtils;
 import com.hms_networks.sc.canary.api.CanaryApiRequestBuilder;
-import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
 import java.util.Date;
 
 /**
@@ -212,15 +212,15 @@ public class CanaryDataPayload {
   }
 
   /**
-   * Gets the payload as a built {@link RequestInfo} object for sending to Canary.
+   * Gets the payload as a built {@link SCHttpPostRequestInfo} object for sending to Canary.
    *
-   * <p>The payload is built as a {@link RequestInfo} object using the {@link
+   * <p>The payload is built as a {@link SCHttpPostRequestInfo} object using the {@link
    * CanaryApiRequestBuilder#getStoreDataRequest(JSONObject)} method.
    *
-   * @return the payload as a built {@link RequestInfo} object
+   * @return the payload as a built {@link SCHttpPostRequestInfo} object
    * @since 1.0.0
    */
-  public synchronized RequestInfo getPayload() {
+  public synchronized SCHttpPostRequestInfo getPayload() {
     return CanaryApiRequestBuilder.getStoreDataRequest(tvqsJson);
   }
 }

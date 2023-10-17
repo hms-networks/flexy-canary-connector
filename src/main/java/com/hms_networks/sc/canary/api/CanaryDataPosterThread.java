@@ -1,9 +1,9 @@
 package com.hms_networks.sc.canary.api;
 
 import com.hms_networks.americas.sc.extensions.logging.Logger;
+import com.hms_networks.americas.sc.extensions.system.http.requests.SCHttpPostRequestInfo;
 import com.hms_networks.sc.canary.CanaryConnectorMain;
 import com.hms_networks.sc.canary.data.CanaryDataPayloadManager;
-import com.hms_networks.sc.canary.temp_abstract.RequestInfo;
 
 /**
  * Class to manage sending data to the Canary API.
@@ -32,7 +32,7 @@ public class CanaryDataPosterThread extends Thread {
 
     while (sendDataControl) {
 
-      RequestInfo request = CanaryDataPayloadManager.getNextPayload();
+      SCHttpPostRequestInfo request = CanaryDataPayloadManager.getNextPayload();
 
       // If there are any payloads to send
       if (request != null) {
