@@ -71,6 +71,6 @@ const styles = {
     borderRadius: '5px',
     maxWidth: '80%',
     maxHeight: '80%',
-    zIndex: 9999,
+    zIndex: 'calc(inherit + 1)',
   }
 }
