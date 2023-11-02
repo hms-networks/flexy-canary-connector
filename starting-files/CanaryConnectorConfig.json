@@ -5,7 +5,7 @@
     "QueueEnableStringHistory": false,
     "Utf8StringSupport": false,
     "QueueDataPollSizeMins": 5,
-    "QueueDataPollIntervalMillis": 0,
+    "QueueDataPollIntervalMillis": 10000,
     "QueueDataAggregationPeriodSecs": -1,
     "QueueDataPollWarnBehindTimeMins": 4,
     "QueueDataPollMaxBehindTimeMins": 10
