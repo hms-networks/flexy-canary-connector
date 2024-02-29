@@ -142,8 +142,13 @@ public class CanaryApiRequestSender {
     } else if (status == CanaryApiResponseStatus.BAD_TOKENS) {
       Logger.LOG_DEBUG("API Session tokens expired, refreshing session tokens.");
       SessionManager.sendKeepAliveOrRefreshToken();
+    } else if (status == CanaryApiResponseStatus.ERROR) {
+      Logger.LOG_CRITICAL("API error detected. Request will be resent.");
+    } else if (status == CanaryApiResponseStatus.ERROR_WAIT_FOR_EXPIRE) {
+      Logger.LOG_CRITICAL(
+          "API error detected. Request will be resent after existing sessions expire.");
     } else if (status == CanaryApiResponseStatus.UNKNOWN_ERROR) {
-      Logger.LOG_CRITICAL("API error detected. Please inspect the logs for further details.");
+      Logger.LOG_CRITICAL("Unknown error detected. Request will be resent.");
     }
   }
 
@@ -169,16 +174,84 @@ public class CanaryApiRequestSender {
 
     // Check for "Errors" field
     if (response.has(ERROR_JSON_FIELD_NAME)) {
+      // Get the errors array
       JSONArray responseErrors = response.getJSONArray(ERROR_JSON_FIELD_NAME);
+
+      // Log errors from responseErrors. Duplicate messages should be counted and shown once.
       if (responseErrors.length() > 0) {
-        status = CanaryApiResponseStatus.UNKNOWN_ERROR;
-        Logger.LOG_INFO("There were " + responseErrors.length() + " errors found.");
-        for (int i = 0; i < responseErrors.length(); i++) {
-          Logger.LOG_CRITICAL("API error: " + responseErrors.getString(i));
+        // Log the number of errors in the response
+        Logger.LOG_INFO(
+            "The API response contained " + responseErrors.length() + " error message(s).");
+
+        // Get the first error message
+        final int firstErrorIndex = 0;
+        String apiErrorMessage = responseErrors.getString(firstErrorIndex);
+        int apiErrorMessageCount = 1;
+
+        // Loop through the rest of the error messages (if any)
+        for (int apiErrorMessageIndex = 1;
+            apiErrorMessageIndex < responseErrors.length();
+            apiErrorMessageIndex++) {
+          String nextApiErrorMessage = responseErrors.getString(apiErrorMessageIndex);
+          // Check if next error msg if the same as current, if so increment count
+          if (nextApiErrorMessage.equals(apiErrorMessage)) {
+            apiErrorMessageCount++;
+          } else {
+            // Check if error message suggests data duplication
+            if (checkApiErrorSuggestsDataDuplication(apiErrorMessage)) {
+              status = CanaryApiResponseStatus.ERROR_WAIT_FOR_EXPIRE;
+            }
+
+            // Log the error message
+            logApiError(apiErrorMessage, apiErrorMessageCount);
+
+            // Update the current error message and count (times seen)
+            apiErrorMessage = nextApiErrorMessage;
+            apiErrorMessageCount = 1;
+          }
         }
+
+        // Check the last error message
+        if (checkApiErrorSuggestsDataDuplication(apiErrorMessage)) {
+          status = CanaryApiResponseStatus.ERROR_WAIT_FOR_EXPIRE;
+        }
+
+        // Log the last error message
+        logApiError(apiErrorMessage, apiErrorMessageCount);
       }
     }
     return status;
+  }
+
+  /**
+   * Check if the API error message suggests that the data is being duplicated in the database. This
+   * is typically a brief condition that can be resolved by allowing all existing sessions to
+   * expire.
+   *
+   * @param apiErrorMessage the error message to check
+   * @return {@code true} if the error message suggests data duplication, {@code false} otherwise
+   * @since 1.0.2
+   */
+  private static boolean checkApiErrorSuggestsDataDuplication(String apiErrorMessage) {
+    final String TOKEN_EXPIRATION_ERROR_MESSAGE = "Tag is already being logged";
+    return apiErrorMessage.indexOf(TOKEN_EXPIRATION_ERROR_MESSAGE) != -1;
+  }
+
+  /**
+   * Log an API error message, including a count if greater than 1.
+   *
+   * @param apiErrorMessage the error message to log
+   * @param apiErrorMessageCount the number of times the error message has occurred
+   * @since 1.0.2
+   */
+  private static void logApiError(String apiErrorMessage, int apiErrorMessageCount) {
+    // Log error message, including count if greater than 1
+    if (apiErrorMessageCount > 1) {
+      Logger.LOG_CRITICAL(
+          "API error: " + apiErrorMessage + " (" + apiErrorMessageCount + " times)");
+    } else {
+      Logger.LOG_CRITICAL("API error: " + apiErrorMessage);
+    }
   }
 
   /**
