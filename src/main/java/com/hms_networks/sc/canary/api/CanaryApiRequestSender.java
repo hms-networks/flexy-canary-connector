@@ -63,9 +63,12 @@ public class CanaryApiRequestSender {
         status = processJsonResponse(responseJson, url, status);
       }
     } catch (JSONException e) {
-      Logger.LOG_EXCEPTION(e);
-      Logger.LOG_SERIOUS("Unable to generate new JSON object from request's response file.");
-      Logger.LOG_SERIOUS("The request " + url + " has an improperly formatted response.");
+      Logger.LOG_SERIOUS(
+          "Unable to generate new JSON object from request's response file."
+              + "The request "
+              + url
+              + " has an improperly formatted response.",
+          e);
     }
     return status;
   }
