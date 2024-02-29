@@ -17,7 +17,7 @@
       "ReceiverApiVersionNumber": "v2",
       "HistorianServerName": "localhost",
       "ApiClientId": "%EWONNAME%",
-      "ApiClientTimeoutSeconds": 300,
+      "ApiClientTimeoutSeconds": 60,
       "FileSizeMegabytes": 8,
       "AutoCreateDatasets": true,
       "QueueDataPostRateMillis": 3000
