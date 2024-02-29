@@ -86,7 +86,6 @@ public class CanaryApiRequestSender {
 
     try {
       responseBodyString = request.doRequest();
-      Logger.LOG_INFO(responseBodyString);
     } catch (EWException e) {
       requestHttpsError(e, "Ewon exception during HTTP request to " + url + ".");
     } catch (IOException e) {
