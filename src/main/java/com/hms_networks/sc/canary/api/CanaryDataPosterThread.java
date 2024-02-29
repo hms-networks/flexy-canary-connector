@@ -2,6 +2,7 @@ package com.hms_networks.sc.canary.api;
 
 import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.system.http.requests.SCHttpPostRequestInfo;
+import com.hms_networks.americas.sc.extensions.system.time.SCTimeUnit;
 import com.hms_networks.sc.canary.CanaryConnectorMain;
 import com.hms_networks.sc.canary.data.CanaryDataPayloadManager;
 
@@ -39,14 +40,28 @@ public class CanaryDataPosterThread extends Thread {
         Logger.LOG_DEBUG("Sending completed payload to Canary");
         CanaryApiResponseStatus requestStatus = CanaryApiRequestSender.processRequest(request);
 
-        if (requestStatus != CanaryApiResponseStatus.GOOD_REQUEST) {
-          Logger.LOG_WARN("Unable to send payload to Canary");
-        } else {
+        if (requestStatus == CanaryApiResponseStatus.GOOD_REQUEST) {
           SessionManager.updateTokenExpiration();
           boolean removed = CanaryDataPayloadManager.removeNextPayload();
           if (!removed) {
             Logger.LOG_WARN("Unable to remove payload from queue");
           }
+        } else if (requestStatus == CanaryApiResponseStatus.ERROR_WAIT_FOR_EXPIRE) {
+          Logger.LOG_WARN(
+              "Waiting for existing sessions to expire before sending more data to Canary");
+          try {
+            final long apiClientTimeoutMillis =
+                SCTimeUnit.SECONDS.toMillis(
+                    CanaryConnectorMain.getConnectorConfig().getApiClientTimeoutSeconds());
+            CanaryConnectorMain.getInstance().setDataPollingBlocked(true);
+            Thread.sleep(apiClientTimeoutMillis);
+            CanaryConnectorMain.getInstance().setDataPollingBlocked(false);
+          } catch (InterruptedException e) {
+            Logger.LOG_SERIOUS("An error occurred while waiting for existing sessions to expire.");
+            Logger.LOG_EXCEPTION(e);
+          }
+        } else {
+          Logger.LOG_WARN("Unable to send payload to Canary");
         }
       }
 
