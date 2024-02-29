@@ -115,15 +115,24 @@ public class CanaryApiRequestSender {
       JSONObject response, String connectionUrl, CanaryApiResponseStatus messageStatus) {
 
     try {
+      // Check generic response components
       messageStatus = checkGenericResponseJson(response, messageStatus);
       processResponseStatus(messageStatus);
-      messageStatus = checkUserTokenResponseJson(response, messageStatus);
-      processResponseStatus(messageStatus);
-      messageStatus = checkSessionTokenResponseJson(response, messageStatus);
-      processResponseStatus(messageStatus);
+
+      // Check user token response components
+      if (messageStatus == CanaryApiResponseStatus.GOOD_REQUEST) {
+        messageStatus = checkUserTokenResponseJson(response, messageStatus);
+        processResponseStatus(messageStatus);
+      }
+
+      // Check session token response components
+      if (messageStatus == CanaryApiResponseStatus.GOOD_REQUEST) {
+        messageStatus = checkSessionTokenResponseJson(response, messageStatus);
+        processResponseStatus(messageStatus);
+      }
 
     } catch (Exception e) {
-      messageStatus = CanaryApiResponseStatus.UNKNOWN_STATUS;
+      messageStatus = CanaryApiResponseStatus.UNKNOWN_ERROR;
       Logger.LOG_SERIOUS(
           "An error occurred while parsing the response for request: " + connectionUrl);
       Logger.LOG_EXCEPTION(e);
