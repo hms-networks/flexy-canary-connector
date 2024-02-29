@@ -47,12 +47,46 @@ public class CanaryApiResponseStatus {
   private static final int UNKNOWN_ERROR_INT = 4;
 
   /**
+   * Static status integer assigned to represent the response status when requests result in
+   * error(s).
+   *
+   * @since 1.0.2
+   */
+  private static final int ERROR_INT = 5;
+
+  /**
+   * Static status integer assigned to represent the response status when requests result in
+   * error(s) that indicate a condition where the device should wait for all sessions to expire.
+   *
+   * @since 1.0.2
+   */
+  private static final int ERROR_WAIT_FOR_EXPIRE_INT = 6;
+
+  /**
    * Static status string that is returned from Canary API requests when the message's status is set
    * to good.
    *
    * @since 1.0.0
    */
   private static final String GOOD_STATUS_STRING = "Good";
+
+  /**
+   * Static status string that is returned from Canary API requests when the message's status is set
+   * to error. Note: This is a separate status from the {@link #ERROR_STATUS_STRING} status, which
+   * is used when more than one error is present.
+   *
+   * @since 1.0.2
+   */
+  private static final String ERROR_STATUS_STRING = "Error";
+
+  /**
+   * Static status string that is returned from Canary API requests when the message's status is set
+   * to errors. Note: This is a separate status from the {@link #ERROR_STATUS_STRING} status, which
+   * is used when only one error is present.
+   *
+   * @since 1.0.2
+   */
+  private static final String ERRORS_STATUS_STRING = "Errors";
 
   /**
    * Static status string that is returned from Canary API requests when message's status are set to
@@ -107,6 +141,24 @@ public class CanaryApiResponseStatus {
       new CanaryApiResponseStatus(BAD_TOKENS_INT);
 
   /**
+   * Enum value-like {@link CanaryApiResponseStatus} object representing the response status when
+   * requests result in error(s).
+   *
+   * @since 1.0.2
+   */
+  public static final CanaryApiResponseStatus ERROR = new CanaryApiResponseStatus(ERROR_INT);
+
+  /**
+   * Enum value-like {@link CanaryApiResponseStatus} object representing the response status when
+   * requests result in error(s) that indicate a condition where the device should wait for all
+   * sessions to expire.
+   *
+   * @since 1.0.2
+   */
+  public static final CanaryApiResponseStatus ERROR_WAIT_FOR_EXPIRE =
+      new CanaryApiResponseStatus(ERROR_WAIT_FOR_EXPIRE_INT);
+
+  /**
    * Enum value-like {@link CanaryApiResponseStatus} object representing the API response status set
    * to an unknown error.
    *
@@ -148,6 +200,8 @@ public class CanaryApiResponseStatus {
     } else if (statusStr.equals(BAD_USER_TOKEN_STATUS_STRING)
         || statusStr.equals(BAD_SESSION_TOKEN_STATUS_STRING)) {
       status = BAD_TOKENS;
+    } else if (statusStr.equals(ERROR_STATUS_STRING) || statusStr.equals(ERRORS_STATUS_STRING)) {
+      status = ERROR;
     } else {
       status = UNKNOWN_STATUS;
     }
