@@ -158,7 +158,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    *
    * @since 1.0.0
    */
-  public static final int DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS = 300;
+  public static final int DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS = 60;
 
   /**
    * Default value for the auto create datasets setting in the configuration file.
