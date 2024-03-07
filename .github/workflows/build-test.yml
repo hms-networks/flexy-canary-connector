@@ -1,5 +1,5 @@
 # HMS Networks; Americas
-# Code Format Test Action for Maven-based Ewon ETK Projects
+# Build Test Action for Maven-based Ewon ETK Projects
 # Version: 3.0.0
 # Date: February 8, 2024
 #
@@ -7,7 +7,7 @@
 # is made to the `main` branch or a pull request for the `main`
 # branch.
 
-name: Code Format Test
+name: Build Test
 
 on:
   pull_request:
@@ -18,13 +18,18 @@ on:
       - main
 
 jobs:
-  code-format-test:
+  build-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
 
-      - name: Test Code Formatting
-        uses: axel-op/googlejavaformat-action@v3
+      - name: Set Up JDK
+        uses: actions/setup-java@v4
         with:
-          args: "--dry-run --skip-sorting-imports --set-exit-if-changed"
+          distribution: 'corretto'
+          java-version: 16
+          cache: 'maven'
+
+      - name: Package Java Files With Maven
+        run: mvn package -f pom.xml
