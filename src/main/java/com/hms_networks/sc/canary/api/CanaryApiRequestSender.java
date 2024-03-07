@@ -35,12 +35,10 @@ public class CanaryApiRequestSender {
     // Parse response body for useful information
     status = handleResponseBodyString(responseBodyString, request.getUrl());
 
-    // Try a bad request once more after issue resolution attempts have been made
+    // Increment fail request counter if request was not successful
     if (status != CanaryApiResponseStatus.GOOD_REQUEST) {
       request.incrementFailRequestCounter();
-      Logger.LOG_WARN("Request was not successful, retrying.");
-      responseBodyString = apiRequest(request);
-      status = handleResponseBodyString(responseBodyString, request.getUrl());
+      Logger.LOG_WARN("Request was not successful, will retry.");
     }
 
     return status;
