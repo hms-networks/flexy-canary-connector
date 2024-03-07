@@ -5,6 +5,21 @@ sidebar_label: Change Log
 toc_max_heading_level: 2
 ---
 
+## Version 1.0.2
+### Features
+- Added delay to allow sessions to expire after detecting data duplication on Canary
+- Improved error logging for API responses to reduce log spam by counting identical error messages
+  and logging them only once (with the count)
+### Bug Fixes
+- Resolved bug causing incorrect response statuses to be reported when multiple requests were made
+  simultaneously
+### Other
+- Added issue templates for GitHub Issues creation
+- Removed raw output logging of response bodies to eliminate duplicate messaging and redundant
+  logging
+- Removed a hardcoded API retry step which was redundant to the automatic retry mechanism and
+  commonly resulted in the same error as the original request.
+
 ## Version 1.0.1
 ### Features
 - N/A
