@@ -120,7 +120,7 @@ public class CanaryApiResponseStatus {
    *
    * @since 1.0.0
    */
-  private static int statusInt;
+  private final int statusInt;
 
   /**
    * Constructor for status enum-like object. Specified status integer identifiers must be unique.
