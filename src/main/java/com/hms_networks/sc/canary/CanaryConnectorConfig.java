@@ -513,13 +513,13 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * @since 1.0.0
    */
   public int getApiClientTimeoutSeconds() {
-    int apiClientTimeout = DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS;
+    int apiClientTimeoutSeconds = DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS;
 
     try {
       if (getConnectorConfigurationObject()
           .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
           .has(CONFIG_FILE_API_CLIENT_TIMEOUT_KEY)) {
-        apiClientTimeout =
+        apiClientTimeoutSeconds =
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getInt(CONFIG_FILE_API_CLIENT_TIMEOUT_KEY);
@@ -535,7 +535,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
           e);
     }
 
-    return apiClientTimeout;
+    return apiClientTimeoutSeconds;
   }
 
   /**
@@ -545,13 +545,13 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * @since 1.0.0
    */
   public int getApiClientFileSize() {
-    int apiClientTimeout = DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB;
+    int apiClientFileSizeMb = DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB;
 
     try {
       if (getConnectorConfigurationObject()
           .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
           .has(CONFIG_FILE_API_FILE_SIZE_KEY)) {
-        apiClientTimeout =
+        apiClientFileSizeMb =
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getInt(CONFIG_FILE_API_FILE_SIZE_KEY);
@@ -564,23 +564,23 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
           CONFIG_FILE_API_FILE_SIZE_KEY, String.valueOf(DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB), e);
     }
 
-    return apiClientTimeout;
+    return apiClientFileSizeMb;
   }
 
   /**
-   * Get the sender API version number from the configuration.
+   * Get the auto-create datasets setting from the configuration.
    *
-   * @return sender API version number
+   * @return auto-create datasets setting
    * @since 1.0.0
    */
   public boolean getApiClientAutoCreateDatasets() {
-    boolean apiClientTimeout = DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS;
+    boolean apiClientAutoCreateDatasets = DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS;
 
     try {
       if (getConnectorConfigurationObject()
           .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
           .has(CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY)) {
-        apiClientTimeout =
+        apiClientAutoCreateDatasets =
             getConnectorConfigurationObject()
                 .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
                 .getBoolean(CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY);
@@ -596,7 +596,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
           e);
     }
 
-    return apiClientTimeout;
+    return apiClientAutoCreateDatasets;
   }
 
   /**
