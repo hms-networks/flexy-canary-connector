@@ -116,6 +116,18 @@ before the it rolls over.
 Parameter to configure if the historian should create new datasets for tags that specify
 datasets that do not exist in the historian.
 
+###### AutoWriteNoData
+Parameter to configure whether the Canary historian inserts a "No Data" quality 1 tick after the
+last value when a session is closed.
+
+###### ExtendData
+Parameter to configure whether the Canary historian should extend the data if a session remains open
+but no new data is received.
+
+###### InsertReplaceData
+Parameter to configure whether the Canary historian should insert data if the data is older than the
+newest value in the historian.
+
 ###### QueueDataPostRateMillis
 Parameter to configure the maximum data post rate in milliseconds.
 
