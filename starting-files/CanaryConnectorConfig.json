@@ -19,6 +19,9 @@
       "ApiClientId": "%EWONNAME%",
       "ApiClientTimeoutSeconds": 60,
       "FileSizeMegabytes": 8,
+      "AutoWriteNoData": false,
+      "ExtendData": true,
+      "InsertReplaceData": false,
       "AutoCreateDatasets": true,
       "QueueDataPostRateMillis": 3000
     },

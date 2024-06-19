@@ -104,6 +104,27 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
   private static final String CONFIG_FILE_API_FILE_SIZE_KEY = "FileSizeMegabytes";
 
   /**
+   * Key for the auto write no data property in the configuration file API object.
+   *
+   * @since 1.0.3
+   */
+  private static final String CONFIG_FILE_API_AUTO_WRITE_NO_DATA_KEY = "AutoWriteNoData";
+
+  /**
+   * Key for the extend data property in the configuration file API object.
+   *
+   * @since 1.0.3
+   */
+  private static final String CONFIG_FILE_API_EXTEND_DATA_KEY = "ExtendData";
+
+  /**
+   * Key for the insert replace data property in the configuration file API object.
+   *
+   * @since 1.0.3
+   */
+  private static final String CONFIG_FILE_API_INSERT_REPLACE_DATA_KEY = "InsertReplaceData";
+
+  /**
    * Key for the username in the configuration file auth object.
    *
    * @since 1.0.0
@@ -173,6 +194,27 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * @since 1.0.0
    */
   public static final int DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB = 8;
+
+  /**
+   * Default value for the auto write no data setting in the configuration file.
+   *
+   * @since 1.0.3
+   */
+  public static final boolean DEFAULT_CONFIG_API_AUTO_WRITE_NO_DATA = false;
+
+  /**
+   * Default value for the extend data setting in the configuration file.
+   *
+   * @since 1.0.3
+   */
+  public static final boolean DEFAULT_CONFIG_API_EXTEND_DATA = true;
+
+  /**
+   * Default value for the insert replace data setting in the configuration file.
+   *
+   * @since 1.0.3
+   */
+  public static final boolean DEFAULT_CONFIG_API_INSERT_REPLACE_DATA = false;
 
   /**
    * Default value for the API historian name in the configuration file.
@@ -267,6 +309,11 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     apiConfigObject.put(
         CONFIG_FILE_API_CLIENT_TIMEOUT_KEY, DEFAULT_CONFIG_API_CLIENT_TIMEOUT_SECONDS);
     apiConfigObject.put(CONFIG_FILE_API_FILE_SIZE_KEY, DEFAULT_CONFIG_API_CLIENT_FILE_SIZE_MB);
+    apiConfigObject.put(
+        CONFIG_FILE_API_AUTO_WRITE_NO_DATA_KEY, DEFAULT_CONFIG_API_AUTO_WRITE_NO_DATA);
+    apiConfigObject.put(CONFIG_FILE_API_EXTEND_DATA_KEY, DEFAULT_CONFIG_API_EXTEND_DATA);
+    apiConfigObject.put(
+        CONFIG_FILE_API_INSERT_REPLACE_DATA_KEY, DEFAULT_CONFIG_API_INSERT_REPLACE_DATA);
     apiConfigObject.put(
         CONFIG_FILE_API_AUTO_CREATE_DATASETS_KEY, DEFAULT_CONFIG_API_AUTO_CREATE_DATASETS);
     apiConfigObject.put(
@@ -565,6 +612,99 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     }
 
     return apiClientFileSizeMb;
+  }
+
+  /**
+   * Get the auto write no data setting from the configuration.
+   *
+   * @return auto write no data setting
+   * @since 1.0.3
+   */
+  public boolean getApiAutoWriteNoData() {
+    boolean apiAutoWriteNoData = DEFAULT_CONFIG_API_AUTO_WRITE_NO_DATA;
+
+    try {
+      if (getConnectorConfigurationObject()
+          .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+          .has(CONFIG_FILE_API_AUTO_WRITE_NO_DATA_KEY)) {
+        apiAutoWriteNoData =
+            getConnectorConfigurationObject()
+                .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+                .getBoolean(CONFIG_FILE_API_AUTO_WRITE_NO_DATA_KEY);
+      } else {
+        logMissingField(
+            CONFIG_FILE_API_AUTO_WRITE_NO_DATA_KEY,
+            String.valueOf(DEFAULT_CONFIG_API_AUTO_WRITE_NO_DATA));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          CONFIG_FILE_API_AUTO_WRITE_NO_DATA_KEY,
+          String.valueOf(DEFAULT_CONFIG_API_AUTO_WRITE_NO_DATA),
+          e);
+    }
+
+    return apiAutoWriteNoData;
+  }
+
+  /**
+   * Get the extend data setting from the configuration.
+   *
+   * @return extend data setting
+   * @since 1.0.3
+   */
+  public boolean getApiExtendData() {
+    boolean apiExtendData = DEFAULT_CONFIG_API_EXTEND_DATA;
+
+    try {
+      if (getConnectorConfigurationObject()
+          .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+          .has(CONFIG_FILE_API_EXTEND_DATA_KEY)) {
+        apiExtendData =
+            getConnectorConfigurationObject()
+                .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+                .getBoolean(CONFIG_FILE_API_EXTEND_DATA_KEY);
+      } else {
+        logMissingField(
+            CONFIG_FILE_API_EXTEND_DATA_KEY, String.valueOf(DEFAULT_CONFIG_API_EXTEND_DATA));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          CONFIG_FILE_API_EXTEND_DATA_KEY, String.valueOf(DEFAULT_CONFIG_API_EXTEND_DATA), e);
+    }
+
+    return apiExtendData;
+  }
+
+  /**
+   * Get the insert replace data setting from the configuration.
+   *
+   * @return insert replace data setting
+   * @since 1.0.3
+   */
+  public boolean getApiInsertReplaceData() {
+    boolean apiInsertReplaceData = DEFAULT_CONFIG_API_INSERT_REPLACE_DATA;
+
+    try {
+      if (getConnectorConfigurationObject()
+          .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+          .has(CONFIG_FILE_API_INSERT_REPLACE_DATA_KEY)) {
+        apiInsertReplaceData =
+            getConnectorConfigurationObject()
+                .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+                .getBoolean(CONFIG_FILE_API_INSERT_REPLACE_DATA_KEY);
+      } else {
+        logMissingField(
+            CONFIG_FILE_API_INSERT_REPLACE_DATA_KEY,
+            String.valueOf(DEFAULT_CONFIG_API_INSERT_REPLACE_DATA));
+      }
+    } catch (Exception e) {
+      logFailedField(
+          CONFIG_FILE_API_INSERT_REPLACE_DATA_KEY,
+          String.valueOf(DEFAULT_CONFIG_API_INSERT_REPLACE_DATA),
+          e);
+    }
+
+    return apiInsertReplaceData;
   }
 
   /**

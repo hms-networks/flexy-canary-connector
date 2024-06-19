@@ -85,6 +85,27 @@ public class CanaryApiRequestBuilder {
   private static final String JSON_KEY_FILE_SIZE = "fileSize";
 
   /**
+   * The JSON key for the auto write no data field.
+   *
+   * @since 1.0.3
+   */
+  private static final String JSON_KEY_AUTO_WRITE_NO_DATA = "autoWriteNoData";
+
+  /**
+   * The JSON key for the extend data field.
+   *
+   * @since 1.0.3
+   */
+  private static final String JSON_KEY_EXTEND_DATA = "extendData";
+
+  /**
+   * The JSON key for the insert replace data field.
+   *
+   * @since 1.0.3
+   */
+  private static final String JSON_KEY_INSERT_REPLACE_DATA = "insertReplaceData";
+
+  /**
    * The JSON key for the auto create datasets field.
    *
    * @since 1.0.0
@@ -253,6 +274,14 @@ public class CanaryApiRequestBuilder {
             CanaryConnectorMain.getConnectorConfig().getApiClientTimeoutSeconds()));
     settings.putNonNull(
         JSON_KEY_FILE_SIZE, CanaryConnectorMain.getConnectorConfig().getApiClientFileSize());
+    settings.putNonNull(
+        JSON_KEY_AUTO_WRITE_NO_DATA,
+        CanaryConnectorMain.getConnectorConfig().getApiAutoWriteNoData());
+    settings.putNonNull(
+        JSON_KEY_EXTEND_DATA, CanaryConnectorMain.getConnectorConfig().getApiExtendData());
+    settings.putNonNull(
+        JSON_KEY_INSERT_REPLACE_DATA,
+        CanaryConnectorMain.getConnectorConfig().getApiInsertReplaceData());
     settings.putNonNull(
         JSON_KEY_AUTO_CREATE_DATASETS,
         CanaryConnectorMain.getConnectorConfig().getApiClientAutoCreateDatasets());
