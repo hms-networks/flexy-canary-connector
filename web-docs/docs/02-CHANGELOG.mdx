@@ -5,6 +5,17 @@ sidebar_label: Change Log
 toc_max_heading_level: 2
 ---
 
+## Version 1.0.3
+### Features
+- Added optional session configuration fields to allow for more control over the session settings
+  for the API connection to Canary.
+### Bug Fixes
+- Fixed incorrect default value in example configuration for `QueueDataPollSizeMins` field (was 5,
+  should be 1).
+### Other
+- Cleaned up code comments and variable naming in the `CanaryConnectorConfig` class to improve
+  readability and maintainability.
+
 ## Version 1.0.2
 ### Features
 - Added delay to allow sessions to expire after detecting data duplication on Canary
