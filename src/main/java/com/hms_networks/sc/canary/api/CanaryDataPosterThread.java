@@ -46,6 +46,7 @@ public class CanaryDataPosterThread extends Thread {
           if (!removed) {
             Logger.LOG_WARN("Unable to remove payload from queue");
           }
+          CanaryConnectorMain.getInstance().setDataPollingBlocked(false);
         } else if (requestStatus == CanaryApiResponseStatus.ERROR_WAIT_FOR_EXPIRE) {
           Logger.LOG_WARN(
               "Waiting for existing sessions to expire before sending more data to Canary");
@@ -60,6 +61,9 @@ public class CanaryDataPosterThread extends Thread {
             Logger.LOG_SERIOUS("An error occurred while waiting for existing sessions to expire.");
             Logger.LOG_EXCEPTION(e);
           }
+        } else if (requestStatus == CanaryApiResponseStatus.UNKNOWN_ERROR) {
+          Logger.LOG_WARN("Unable to send payload to Canary");
+          CanaryConnectorMain.getInstance().setDataPollingBlocked(true);
         } else {
           Logger.LOG_WARN("Unable to send payload to Canary");
         }

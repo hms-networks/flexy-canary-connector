@@ -9,7 +9,6 @@ import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpAuthException;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpConnectionException;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpEwonException;
-import com.hms_networks.americas.sc.extensions.system.http.SCHttpUnknownException;
 import com.hms_networks.americas.sc.extensions.system.http.requests.SCHttpPostRequestInfo;
 import java.io.IOException;
 
@@ -17,7 +16,7 @@ import java.io.IOException;
  * Class to send and process Canary API requests.
  *
  * @author HMS Networks, MU Americas Solution Center
- * @since 1.0.0
+ * @since 1.0.1
  */
 public class CanaryApiRequestSender {
 
@@ -30,7 +29,14 @@ public class CanaryApiRequestSender {
    */
   public static CanaryApiResponseStatus processRequest(SCHttpPostRequestInfo request) {
     CanaryApiResponseStatus status;
-    String responseBodyString = apiRequest(request);
+    String responseBodyString;
+
+    try {
+      responseBodyString = request.doRequest();
+    } catch (Exception e) {
+      logApiRequestException(e, request);
+      return CanaryApiResponseStatus.UNKNOWN_ERROR;
+    }
 
     // Parse response body for useful information
     status = handleResponseBodyString(responseBodyString, request.getUrl());
@@ -72,33 +78,27 @@ public class CanaryApiRequestSender {
   }
 
   /**
-   * Send an API POST request with the given information.
+   * Log the Exception thrown from the api request.
    *
-   * @param request {@link SCHttpPostRequestInfo} to hold all request information
-   * @return true if the request was successful
-   * @since 1.0.0
+   * @param e {@link Exception}
+   * @since 1.0.1
    */
-  private static String apiRequest(SCHttpPostRequestInfo request) {
-    String responseBodyString = "";
+  private static void logApiRequestException(Exception e, SCHttpPostRequestInfo request) {
     String url = request.getUrl();
 
-    try {
-      responseBodyString = request.doRequest();
-    } catch (EWException e) {
+    if (e instanceof EWException) {
       requestHttpsError(e, "Ewon exception during HTTP request to " + url + ".");
-    } catch (IOException e) {
+    } else if (e instanceof IOException) {
       requestHttpsError(e, "IO exception during HTTP request to " + url + ".");
-    } catch (SCHttpEwonException e) {
+    } else if (e instanceof SCHttpEwonException) {
       requestHttpsError(e, "Ewon exception during the HTTP request to " + url + ".");
-    } catch (SCHttpAuthException e) {
+    } else if (e instanceof SCHttpAuthException) {
       requestHttpsError(e, "Auth exception during the HTTP request to " + url + ".");
-    } catch (SCHttpConnectionException e) {
+    } else if (e instanceof SCHttpConnectionException) {
       requestHttpsError(e, "Connection error during the HTTP request to " + url + ".");
-    } catch (SCHttpUnknownException e) {
+    } else {
       requestHttpsError(e, "Unknown exception during the HTTP request to " + url + ".");
     }
-
-    return responseBodyString;
   }
 
   /**
