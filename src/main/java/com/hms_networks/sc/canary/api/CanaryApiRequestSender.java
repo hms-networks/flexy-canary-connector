@@ -108,6 +108,7 @@ public class CanaryApiRequestSender {
    *
    * @param response the Canary API response JSON
    * @param connectionUrl the URL that generated the response
+   * @param messageStatus the current {@link CanaryApiResponseStatus} of the API response
    * @return true if the request was successful
    * @since 1.0.0
    */
@@ -165,7 +166,8 @@ public class CanaryApiRequestSender {
    * Parse the response JSON for generic response components.
    *
    * @param response JSON to read in and parse
-   * @return true if the response indicates success
+   * @param status the current {@link CanaryApiResponseStatus} of the API response
+   * @return updated {@link CanaryApiResponseStatus} based on the response content
    * @throws JSONException on errors reading the JSON object
    * @since 1.0.0
    */
@@ -267,6 +269,7 @@ public class CanaryApiRequestSender {
    * Parse the response JSON for user token response components.
    *
    * @param response JSON to read in and parse
+   * @param status the current {@link CanaryApiResponseStatus} of the API response
    * @return true if the response indicates success
    * @throws JSONException on errors reading the JSON object
    * @since 1.0.0
@@ -288,7 +291,8 @@ public class CanaryApiRequestSender {
    * Parse the response JSON for session response components.
    *
    * @param response JSON to read in and parse
-   * @return true if the response indicates success
+   * @param status the current {@link CanaryApiResponseStatus} of the API response
+   * @return updated {@link CanaryApiResponseStatus} based on the content of the response
    * @throws JSONException on errors reading the JSON object
    * @since 1.0.0
    */
