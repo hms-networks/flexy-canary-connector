@@ -9,6 +9,7 @@ import com.hms_networks.sc.canary.CanaryConnectorMain;
  *
  * @author HMS Networks, MU Americas Solution Center
  * @since 1.0.0
+ * @version 1.0.1
  */
 public class SessionManager {
 
@@ -37,6 +38,15 @@ public class SessionManager {
     } else if (millisToSessionExpires() < BEFORE_EXPIRE_REFRESH_DURATION_MILLIS) {
       sendKeepAlive();
     }
+  }
+
+  /**
+   * Bypass session expiration check and force a new session token.
+   *
+   * @since 1.0.1
+   */
+  public static void handleSessionTokenError() {
+    getSessionToken();
   }
 
   /**
