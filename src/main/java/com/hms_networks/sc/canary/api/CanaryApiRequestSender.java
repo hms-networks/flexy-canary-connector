@@ -9,7 +9,6 @@ import com.hms_networks.americas.sc.extensions.logging.Logger;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpAuthException;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpConnectionException;
 import com.hms_networks.americas.sc.extensions.system.http.SCHttpEwonException;
-import com.hms_networks.americas.sc.extensions.system.http.SCHttpUnknownException;
 import com.hms_networks.americas.sc.extensions.system.http.requests.SCHttpPostRequestInfo;
 import java.io.IOException;
 
@@ -18,11 +17,13 @@ import java.io.IOException;
  *
  * @author HMS Networks, MU Americas Solution Center
  * @since 1.0.0
+ * @version 1.0.1
  */
 public class CanaryApiRequestSender {
 
   /**
-   * Send and parse an API POST request with the given information.
+   * Send and parse an API POST request with the given information. HTTP POST exceptions will be
+   * caught and logged and will result in an {@link CanaryApiResponseStatus } error response.
    *
    * @param request the {@link SCHttpPostRequestInfo} to hold all request information
    * @return the status of the request
@@ -30,7 +31,14 @@ public class CanaryApiRequestSender {
    */
   public static CanaryApiResponseStatus processRequest(SCHttpPostRequestInfo request) {
     CanaryApiResponseStatus status;
-    String responseBodyString = apiRequest(request);
+    String responseBodyString;
+
+    try {
+      responseBodyString = request.doRequest();
+    } catch (Exception e) {
+      logApiRequestException(e, request.getUrl());
+      return CanaryApiResponseStatus.ERROR;
+    }
 
     // Parse response body for useful information
     status = handleResponseBodyString(responseBodyString, request.getUrl());
@@ -72,33 +80,27 @@ public class CanaryApiRequestSender {
   }
 
   /**
-   * Send an API POST request with the given information.
+   * Check the type of the exception passed as a parameter. Log a specific message for that type.
    *
-   * @param request {@link SCHttpPostRequestInfo} to hold all request information
-   * @return true if the request was successful
-   * @since 1.0.0
+   * @param exception {@link Exception} from HTTP POST request
+   * @param url request url that generated the exception
+   * @since 1.0.1
    */
-  private static String apiRequest(SCHttpPostRequestInfo request) {
-    String responseBodyString = "";
-    String url = request.getUrl();
+  private static void logApiRequestException(Exception exception, String url) {
 
-    try {
-      responseBodyString = request.doRequest();
-    } catch (EWException e) {
-      requestHttpsError(e, "Ewon exception during HTTP request to " + url + ".");
-    } catch (IOException e) {
-      requestHttpsError(e, "IO exception during HTTP request to " + url + ".");
-    } catch (SCHttpEwonException e) {
-      requestHttpsError(e, "Ewon exception during the HTTP request to " + url + ".");
-    } catch (SCHttpAuthException e) {
-      requestHttpsError(e, "Auth exception during the HTTP request to " + url + ".");
-    } catch (SCHttpConnectionException e) {
-      requestHttpsError(e, "Connection error during the HTTP request to " + url + ".");
-    } catch (SCHttpUnknownException e) {
-      requestHttpsError(e, "Unknown exception during the HTTP request to " + url + ".");
+    if (exception instanceof EWException) {
+      requestHttpsError(exception, "Ewon exception during HTTP request to " + url + ".");
+    } else if (exception instanceof IOException) {
+      requestHttpsError(exception, "IO exception during HTTP request to " + url + ".");
+    } else if (exception instanceof SCHttpEwonException) {
+      requestHttpsError(exception, "Ewon exception during the HTTP request to " + url + ".");
+    } else if (exception instanceof SCHttpAuthException) {
+      requestHttpsError(exception, "Auth exception during the HTTP request to " + url + ".");
+    } else if (exception instanceof SCHttpConnectionException) {
+      requestHttpsError(exception, "Connection error during the HTTP request to " + url + ".");
+    } else {
+      requestHttpsError(exception, "Unknown exception during the HTTP request to " + url + ".");
     }
-
-    return responseBodyString;
   }
 
   /**
@@ -106,6 +108,7 @@ public class CanaryApiRequestSender {
    *
    * @param response the Canary API response JSON
    * @param connectionUrl the URL that generated the response
+   * @param messageStatus the current {@link CanaryApiResponseStatus} of the API response
    * @return true if the request was successful
    * @since 1.0.0
    */
@@ -148,7 +151,7 @@ public class CanaryApiRequestSender {
       Logger.LOG_CRITICAL("Unknown error detected. Request will be resent.");
     } else if (status == CanaryApiResponseStatus.BAD_TOKENS) {
       Logger.LOG_DEBUG("API Session tokens expired, refreshing session tokens.");
-      SessionManager.sendKeepAliveOrRefreshToken();
+      SessionManager.handleSessionTokenError();
     } else if (status == CanaryApiResponseStatus.ERROR) {
       Logger.LOG_CRITICAL("API error detected. Request will be resent.");
     } else if (status == CanaryApiResponseStatus.ERROR_WAIT_FOR_EXPIRE) {
@@ -163,7 +166,8 @@ public class CanaryApiRequestSender {
    * Parse the response JSON for generic response components.
    *
    * @param response JSON to read in and parse
-   * @return true if the response indicates success
+   * @param status the current {@link CanaryApiResponseStatus} of the API response
+   * @return updated {@link CanaryApiResponseStatus} based on the response content
    * @throws JSONException on errors reading the JSON object
    * @since 1.0.0
    */
@@ -265,6 +269,7 @@ public class CanaryApiRequestSender {
    * Parse the response JSON for user token response components.
    *
    * @param response JSON to read in and parse
+   * @param status the current {@link CanaryApiResponseStatus} of the API response
    * @return true if the response indicates success
    * @throws JSONException on errors reading the JSON object
    * @since 1.0.0
@@ -286,7 +291,8 @@ public class CanaryApiRequestSender {
    * Parse the response JSON for session response components.
    *
    * @param response JSON to read in and parse
-   * @return true if the response indicates success
+   * @param status the current {@link CanaryApiResponseStatus} of the API response
+   * @return updated {@link CanaryApiResponseStatus} based on the content of the response
    * @throws JSONException on errors reading the JSON object
    * @since 1.0.0
    */
@@ -298,6 +304,7 @@ public class CanaryApiRequestSender {
     if (response.has(SESSION_TOKEN_JSON_FIELD_NAME)) {
       String sessionToken = response.getString(SESSION_TOKEN_JSON_FIELD_NAME);
       SessionManager.setCurrentSessionToken(sessionToken);
+      SessionManager.updateTokenExpiration();
       status = CanaryApiResponseStatus.GOOD_REQUEST;
     }
     return status;

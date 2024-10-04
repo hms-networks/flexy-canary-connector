@@ -5,6 +5,14 @@ sidebar_label: Change Log
 toc_max_heading_level: 2
 ---
 
+## Version 1.0.4
+### Bug Fixes
+- Fixed excessive memory usage during offline periods by halting historical data reading when
+  there is no connection.
+- Fixed session management bug where session keep alive requests were sent with expired session token.
+### Other
+- Updates to Docs
+
 ## Version 1.0.3
 ### Features
 - Added optional session configuration fields to allow for more control over the session settings
