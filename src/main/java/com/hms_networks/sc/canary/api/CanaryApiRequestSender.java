@@ -304,6 +304,7 @@ public class CanaryApiRequestSender {
     if (response.has(SESSION_TOKEN_JSON_FIELD_NAME)) {
       String sessionToken = response.getString(SESSION_TOKEN_JSON_FIELD_NAME);
       SessionManager.setCurrentSessionToken(sessionToken);
+      SessionManager.updateTokenExpiration();
       status = CanaryApiResponseStatus.GOOD_REQUEST;
     }
     return status;

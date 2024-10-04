@@ -91,7 +91,6 @@ public class SessionManager {
     SCHttpPostRequestInfo request =
         CanaryApiRequestBuilder.getKeepAliveRequest(
             getCurrentUserToken(), getCurrentSessionToken());
-    updateTokenExpiration();
     CanaryApiRequestSender.processRequest(request);
   }
 
@@ -113,7 +112,6 @@ public class SessionManager {
   private static void getSessionToken() {
     SCHttpPostRequestInfo request =
         CanaryApiRequestBuilder.getSessionTokenRequest(getCurrentUserToken());
-    updateTokenExpiration();
     CanaryApiRequestSender.processRequest(request);
   }
 
