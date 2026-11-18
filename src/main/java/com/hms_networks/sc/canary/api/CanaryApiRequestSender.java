@@ -148,7 +148,7 @@ public class CanaryApiRequestSender {
       Logger.LOG_CRITICAL("Unknown error detected. Request will be resent.");
     } else if (status == CanaryApiResponseStatus.BAD_TOKENS) {
       Logger.LOG_DEBUG("API Session tokens expired, refreshing session tokens.");
-      SessionManager.sendKeepAliveOrRefreshToken();
+      SessionManager.handleBadTokensResponse();
     } else if (status == CanaryApiResponseStatus.ERROR) {
       Logger.LOG_CRITICAL("API error detected. Request will be resent.");
     } else if (status == CanaryApiResponseStatus.ERROR_WAIT_FOR_EXPIRE) {
@@ -177,6 +177,11 @@ public class CanaryApiRequestSender {
       String statusString = response.getString(RESPONSE_STATUS_JSON_FIELD_NAME);
       status = CanaryApiResponseStatus.getStatusFromString(statusString);
       Logger.LOG_DEBUG("Response status: " + statusString);
+
+      // A user token is only requested by Canary versions before 24.0
+      if (statusString.equals(CanaryApiResponseStatus.BAD_USER_TOKEN_STATUS_STRING)) {
+        SessionManager.handleBadUserTokenResponse();
+      }
     }
 
     // Check for "Errors" field

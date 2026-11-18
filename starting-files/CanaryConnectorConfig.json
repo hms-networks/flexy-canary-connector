@@ -15,6 +15,7 @@
       "Url": "https://<USER-DOMAIN>:PORT_NUM/",
       "SenderApiVersionNumber": "v1",
       "ReceiverApiVersionNumber": "v2",
+      "ApiCompatibilityMode": "Auto",
       "HistorianServerName": "localhost",
       "ApiClientId": "%EWONNAME%",
       "ApiClientTimeoutSeconds": 60,
@@ -26,6 +27,7 @@
       "QueueDataPostRateMillis": 3000
     },
     "Auth": {
+      "ApiToken": "",
       "UserName": "<USER-NAME>",
       "UserPassword": "<USER-PASSWORD>"
     }

@@ -69,6 +69,28 @@ Parameter to configure the sender API version number.
 ###### ReceiverApiVersionNumber
 Parameter to configure the receiver API version number.
 
+###### ApiCompatibilityMode
+Parameter to configure how the connector authenticates with the Canary Store and Forward (Sender)
+API. Canary 24.0 replaced username/password user tokens with API tokens, and this parameter selects
+which style is used.
+
+| Value      | Canary Version | Behavior                                                                                                   |
+|------------|----------------|------------------------------------------------------------------------------------------------------------|
+| `Auto`     | Any            | Uses `ApiToken` if an API token is set. Otherwise uses `Legacy` if a username and password are set. Otherwise uses `ApiToken` with the API token configured in Canary's Store and Forward settings. |
+| `Legacy`   | Before 24.0    | Requests a user token using `UserName` and `UserPassword`.                                                 |
+| `ApiToken` | 24.0 or newer  | Sends the optional `ApiToken` when opening a session. `UserName` and `UserPassword` are ignored.          |
+
+:::note
+This is an optional parameter. If not specified, `Auto` is used.
+
+In `Auto` mode, if the connector selects API token authentication but Canary reports that a user
+token is required (Canary before 24.0), the connector switches to `Legacy` authentication when a
+username and password are configured.
+
+When upgrading Canary to 24.0 or newer with an existing configuration that contains a username and
+password, set this parameter to `ApiToken` (or remove the username and password).
+:::
+
 ###### HistorianServerName
 Parameter to configure the name for the historian(s) where data will be stored.
 
@@ -112,6 +134,10 @@ It is recommended to use a large timeout to allow the session to be maintained.
 Parameter to configure the number of megabytes a Canary Historical Database (HBD) file can grow to
 before the it rolls over.
 
+:::note
+This parameter is only used with Canary versions before 24.0 (`Legacy` authentication).
+:::
+
 ###### AutoCreateDatasets
 Parameter to configure if the historian should create new datasets for tags that specify
 datasets that do not exist in the historian.
@@ -134,16 +160,27 @@ Parameter to configure the maximum data post rate in milliseconds.
 ##### Auth
 This section contains configuration fields which are used to configure the authentication.
 
-###### UserName
-Parameter to configure the user name for authentication against the Canary API endpoint.
+###### ApiToken
+Parameter to configure the API token for authentication against the Canary API endpoint (Canary
+24.0 or newer). API tokens are created by a Canary administrator.
 
 :::note
-This is a required parameter.
+This is an optional parameter. If empty, Canary uses the API token configured in its Store and
+Forward settings.
+:::
+
+###### UserName
+Parameter to configure the user name for authentication against the Canary API endpoint (Canary
+versions before 24.0).
+
+:::note
+This parameter is required for `Legacy` authentication.
 :::
 
 ###### UserPassword
-Parameter to configure the user password for authentication against the Canary API endpoint.
+Parameter to configure the user password for authentication against the Canary API endpoint (Canary
+versions before 24.0).
 
 :::note
-This is a required parameter.
+This parameter is required for `Legacy` authentication.
 :::

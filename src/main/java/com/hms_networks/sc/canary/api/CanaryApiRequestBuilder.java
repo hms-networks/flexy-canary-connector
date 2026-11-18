@@ -29,6 +29,13 @@ public class CanaryApiRequestBuilder {
   private static final String JSON_KEY_SESSION_TOKEN = "sessionToken";
 
   /**
+   * The JSON key for the API token field (Canary 24.0 and newer).
+   *
+   * @since 1.0.5
+   */
+  private static final String JSON_KEY_API_TOKEN = "apiToken";
+
+  /**
    * The JSON key for the tvqs field.
    *
    * @since 1.0.0
@@ -182,7 +189,7 @@ public class CanaryApiRequestBuilder {
 
     String url = getApiBase() + API_ENDPOINT_STORE_DATA;
     JSONObject requestBodyJson = new JSONObject();
-    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, SessionManager.getCurrentUserToken());
+    putUserTokenIfLegacy(requestBodyJson, SessionManager.getCurrentUserToken());
     requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, SessionManager.getCurrentSessionToken());
     requestBodyJson.putNonNull(JSON_KEY_TVQS, tagData);
     return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
@@ -199,7 +206,7 @@ public class CanaryApiRequestBuilder {
   public static SCHttpPostRequestInfo getKeepAliveRequest(String userToken, String sessionToken) {
     String url = getApiBase() + API_ENDPOINT_KEEP_ALIVE;
     JSONObject requestBodyJson = new JSONObject();
-    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    putUserTokenIfLegacy(requestBodyJson, userToken);
     requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, sessionToken);
     return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
   }
@@ -216,7 +223,7 @@ public class CanaryApiRequestBuilder {
       String userToken, String sessionToken) {
     String url = getApiBase() + API_ENDPOINT_REVOKE_SESSION_TOKEN;
     JSONObject requestBodyJson = new JSONObject();
-    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    putUserTokenIfLegacy(requestBodyJson, userToken);
     requestBodyJson.putNonNull(JSON_KEY_SESSION_TOKEN, sessionToken);
     return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
   }
@@ -254,14 +261,24 @@ public class CanaryApiRequestBuilder {
   /**
    * Get the request to send a session token request to the api.
    *
-   * @param userToken the user token to send with the request
+   * <p>With legacy authentication (Canary versions before 24.0), the user token and file size
+   * setting are included. Otherwise, the configured API token (if any) is included. If no API token
+   * is configured, Canary uses the API token configured in its Store and Forward settings.
+   *
+   * @param userToken the user token to send with the request (legacy authentication only)
    * @return the {@link SCHttpPostRequestInfo} object containing the session token request
    * @since 1.0.0
    */
   public static SCHttpPostRequestInfo getSessionTokenRequest(String userToken) {
+    final boolean legacyAuthMode = SessionManager.isLegacyAuthMode();
     String url = getApiBase() + API_ENDPOINT_GET_SESSION_TOKEN;
     JSONObject requestBodyJson = new JSONObject();
-    requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    if (legacyAuthMode) {
+      requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    } else if (CanaryConnectorMain.getConnectorConfig().isApiTokenConfigured()) {
+      requestBodyJson.putNonNull(
+          JSON_KEY_API_TOKEN, CanaryConnectorMain.getConnectorConfig().getApiToken());
+    }
     JSONArray historians = new JSONArray();
     historians.put(CanaryConnectorMain.getConnectorConfig().getApiHistorianServerName());
     requestBodyJson.putNonNull(JSON_KEY_HISTORIANS, historians);
@@ -272,8 +289,11 @@ public class CanaryApiRequestBuilder {
         JSON_KEY_CLIENT_TIMEOUT,
         SCTimeUnit.SECONDS.toMillis(
             CanaryConnectorMain.getConnectorConfig().getApiClientTimeoutSeconds()));
-    settings.putNonNull(
-        JSON_KEY_FILE_SIZE, CanaryConnectorMain.getConnectorConfig().getApiClientFileSize());
+    if (legacyAuthMode) {
+      // The file size setting was removed in Canary 24.0
+      settings.putNonNull(
+          JSON_KEY_FILE_SIZE, CanaryConnectorMain.getConnectorConfig().getApiClientFileSize());
+    }
     settings.putNonNull(
         JSON_KEY_AUTO_WRITE_NO_DATA,
         CanaryConnectorMain.getConnectorConfig().getApiAutoWriteNoData());
@@ -287,6 +307,20 @@ public class CanaryApiRequestBuilder {
         CanaryConnectorMain.getConnectorConfig().getApiClientAutoCreateDatasets());
     requestBodyJson.putNonNull(JSON_KEY_SETTINGS, settings);
     return new SCHttpPostRequestInfo(url, HEADERS, requestBodyJson.toString());
+  }
+
+  /**
+   * Adds the user token to the specified request body if legacy authentication (Canary versions
+   * before 24.0) is in use. Canary 24.0 and newer do not use user tokens.
+   *
+   * @param requestBodyJson the request body to add the user token to
+   * @param userToken the user token to add
+   * @since 1.0.5
+   */
+  private static void putUserTokenIfLegacy(JSONObject requestBodyJson, String userToken) {
+    if (SessionManager.isLegacyAuthMode()) {
+      requestBodyJson.putNonNull(JSON_KEY_USER_TOKEN, userToken);
+    }
   }
 
   /**

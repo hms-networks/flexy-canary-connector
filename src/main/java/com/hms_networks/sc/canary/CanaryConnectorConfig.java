@@ -60,6 +60,13 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
   private static final String CONFIG_FILE_API_RECEIVER_API_VER_NUM_KEY = "ReceiverApiVersionNumber";
 
   /**
+   * Key for the API compatibility mode in the configuration file API object.
+   *
+   * @since 1.0.5
+   */
+  private static final String CONFIG_FILE_API_COMPATIBILITY_MODE_KEY = "ApiCompatibilityMode";
+
+  /**
    * The configuration file JSON key for the queue data post rate setting.
    *
    * @since 1.0.0
@@ -137,6 +144,43 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
    * @since 1.0.0
    */
   private static final String CONFIG_FILE_AUTH_PASSWORD_KEY = "UserPassword";
+
+  /**
+   * Key for the API token in the configuration file auth object (Canary 24.0 and newer).
+   *
+   * @since 1.0.5
+   */
+  private static final String CONFIG_FILE_AUTH_API_TOKEN_KEY = "ApiToken";
+
+  // endregion
+
+  // region: API Compatibility Modes
+
+  /**
+   * API compatibility mode which automatically selects the authentication style. API token
+   * authentication is used if an API token is configured, otherwise legacy authentication is used
+   * if a username and password are configured, otherwise API token authentication is used with the
+   * API token configured in the Canary Store and Forward settings.
+   *
+   * @since 1.0.5
+   */
+  public static final String API_COMPATIBILITY_MODE_AUTO = "Auto";
+
+  /**
+   * API compatibility mode for Canary versions before 24.0, which use user tokens requested with a
+   * username and password.
+   *
+   * @since 1.0.5
+   */
+  public static final String API_COMPATIBILITY_MODE_LEGACY = "Legacy";
+
+  /**
+   * API compatibility mode for Canary 24.0 and newer, which use an (optional) API token instead of
+   * user tokens.
+   *
+   * @since 1.0.5
+   */
+  public static final String API_COMPATIBILITY_MODE_API_TOKEN = "ApiToken";
 
   // endregion
 
@@ -238,6 +282,21 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
   public static final String DEFAULT_CONFIG_API_USERNAME = "<USER-NAME>";
 
   /**
+   * Default value for the API token in the configuration file. An empty API token indicates that
+   * the API token configured in the Canary Store and Forward settings should be used.
+   *
+   * @since 1.0.5
+   */
+  public static final String DEFAULT_CONFIG_API_TOKEN = "";
+
+  /**
+   * Default value for the API compatibility mode in the configuration file.
+   *
+   * @since 1.0.5
+   */
+  public static final String DEFAULT_CONFIG_API_COMPATIBILITY_MODE = API_COMPATIBILITY_MODE_AUTO;
+
+  /**
    * Default value for the API client ID in the configuration file.
    *
    * @since 1.0.0
@@ -304,6 +363,8 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     apiConfigObject.put(CONFIG_FILE_API_SENDER_API_VER_NUM_KEY, DEFAULT_CONFIG_SENDER_API_VERSION);
     apiConfigObject.put(
         CONFIG_FILE_API_RECEIVER_API_VER_NUM_KEY, DEFAULT_CONFIG_RECEIVER_API_VERSION);
+    apiConfigObject.put(
+        CONFIG_FILE_API_COMPATIBILITY_MODE_KEY, DEFAULT_CONFIG_API_COMPATIBILITY_MODE);
     apiConfigObject.put(CONFIG_FILE_API_HISTORY_SERVER_NAME_KEY, DEFAULT_CONFIG_API_HISTORIAN);
     apiConfigObject.put(CONFIG_FILE_API_CLIENT_ID_KEY, DEFAULT_CONFIG_API_CLIENT_ID);
     apiConfigObject.put(
@@ -322,6 +383,7 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
 
     // Create auth configuration object
     JSONObject authConfigObject = new JSONObject();
+    authConfigObject.put(CONFIG_FILE_AUTH_API_TOKEN_KEY, DEFAULT_CONFIG_API_TOKEN);
     authConfigObject.put(CONFIG_FILE_AUTH_USERNAME_KEY, DEFAULT_CONFIG_API_USERNAME);
     authConfigObject.put(CONFIG_FILE_AUTH_PASSWORD_KEY, DEFAULT_CONFIG_API_PASSWORD);
     connectorConfigObject.put(CONFIG_FILE_AUTH_CONFIGURATION_OBJECT_KEY, authConfigObject);
@@ -417,6 +479,112 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     }
 
     return apiUserPassword;
+  }
+
+  /**
+   * Get the API token from the configuration. This is used with Canary 24.0 and newer. If empty,
+   * the API token configured in the Canary Store and Forward settings is used.
+   *
+   * @return API token, or an empty string if not configured
+   * @since 1.0.5
+   */
+  public String getApiToken() {
+    String apiToken = DEFAULT_CONFIG_API_TOKEN;
+
+    try {
+      JSONObject connectorConfig = getConnectorConfigurationObject();
+      if (connectorConfig.has(CONFIG_FILE_AUTH_CONFIGURATION_OBJECT_KEY)
+          && connectorConfig
+              .getJSONObject(CONFIG_FILE_AUTH_CONFIGURATION_OBJECT_KEY)
+              .has(CONFIG_FILE_AUTH_API_TOKEN_KEY)) {
+        apiToken =
+            connectorConfig
+                .getJSONObject(CONFIG_FILE_AUTH_CONFIGURATION_OBJECT_KEY)
+                .getString(CONFIG_FILE_AUTH_API_TOKEN_KEY)
+                .trim();
+      }
+    } catch (Exception e) {
+      logFailedField(CONFIG_FILE_AUTH_API_TOKEN_KEY, DEFAULT_CONFIG_API_TOKEN, e);
+    }
+
+    return apiToken;
+  }
+
+  /**
+   * Gets a boolean indicating if an API token has been configured.
+   *
+   * @return {@code true} if an API token has been configured, {@code false} otherwise
+   * @since 1.0.5
+   */
+  public boolean isApiTokenConfigured() {
+    return getApiToken().length() > 0;
+  }
+
+  /**
+   * Gets a boolean indicating if a non-default, non-empty API username and password have been
+   * configured. These are required for legacy authentication (Canary versions before 24.0).
+   *
+   * @return {@code true} if a username and password have been configured, {@code false} otherwise
+   * @since 1.0.5
+   */
+  public boolean isApiUserCredentialsConfigured() {
+    String username = getApiUsername();
+    String password = getApiUserPassword();
+    return username.length() > 0
+        && password.length() > 0
+        && !username.equals(DEFAULT_CONFIG_API_USERNAME)
+        && !password.equals(DEFAULT_CONFIG_API_PASSWORD);
+  }
+
+  /**
+   * Get the API compatibility mode from the configuration. One of {@link
+   * #API_COMPATIBILITY_MODE_AUTO}, {@link #API_COMPATIBILITY_MODE_LEGACY}, or {@link
+   * #API_COMPATIBILITY_MODE_API_TOKEN}. The configured value is matched case-insensitively.
+   *
+   * @return API compatibility mode
+   * @since 1.0.5
+   */
+  public String getApiCompatibilityMode() {
+    String apiCompatibilityMode = DEFAULT_CONFIG_API_COMPATIBILITY_MODE;
+
+    try {
+      if (getConnectorConfigurationObject()
+          .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+          .has(CONFIG_FILE_API_COMPATIBILITY_MODE_KEY)) {
+        String configuredMode =
+            getConnectorConfigurationObject()
+                .getJSONObject(CONFIG_FILE_API_CONFIGURATION_OBJECT_KEY)
+                .getString(CONFIG_FILE_API_COMPATIBILITY_MODE_KEY)
+                .trim();
+        if (configuredMode.equalsIgnoreCase(API_COMPATIBILITY_MODE_AUTO)) {
+          apiCompatibilityMode = API_COMPATIBILITY_MODE_AUTO;
+        } else if (configuredMode.equalsIgnoreCase(API_COMPATIBILITY_MODE_LEGACY)) {
+          apiCompatibilityMode = API_COMPATIBILITY_MODE_LEGACY;
+        } else if (configuredMode.equalsIgnoreCase(API_COMPATIBILITY_MODE_API_TOKEN)) {
+          apiCompatibilityMode = API_COMPATIBILITY_MODE_API_TOKEN;
+        } else {
+          Logger.LOG_WARN(
+              "Invalid value \""
+                  + configuredMode
+                  + "\" for the "
+                  + CONFIG_FILE_API_COMPATIBILITY_MODE_KEY
+                  + " configuration field. Valid values are \""
+                  + API_COMPATIBILITY_MODE_AUTO
+                  + "\", \""
+                  + API_COMPATIBILITY_MODE_LEGACY
+                  + "\", and \""
+                  + API_COMPATIBILITY_MODE_API_TOKEN
+                  + "\". Using the default value \""
+                  + DEFAULT_CONFIG_API_COMPATIBILITY_MODE
+                  + "\".");
+        }
+      }
+    } catch (Exception e) {
+      logFailedField(
+          CONFIG_FILE_API_COMPATIBILITY_MODE_KEY, DEFAULT_CONFIG_API_COMPATIBILITY_MODE, e);
+    }
+
+    return apiCompatibilityMode;
   }
 
   /**
@@ -751,13 +919,23 @@ public class CanaryConnectorConfig extends AbstractConnectorConfig {
     boolean allLoaded = true;
     CanaryConnectorConfig connectorConfig = CanaryConnectorMain.getConnectorConfig();
 
-    if (connectorConfig.getApiUrl().equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_URL)
-        || connectorConfig
-            .getApiUsername()
-            .equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_USERNAME)
-        || connectorConfig
-            .getApiUserPassword()
-            .equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_PASSWORD)) {
+    if (connectorConfig.getApiUrl().equals(CanaryConnectorConfig.DEFAULT_CONFIG_API_URL)) {
+      allLoaded = false;
+    }
+
+    // Username and password are only required for legacy authentication (Canary before 24.0)
+    if (connectorConfig.getApiCompatibilityMode().equals(API_COMPATIBILITY_MODE_LEGACY)
+        && !connectorConfig.isApiUserCredentialsConfigured()) {
+      Logger.LOG_CRITICAL(
+          "The "
+              + CONFIG_FILE_API_COMPATIBILITY_MODE_KEY
+              + " configuration field is set to \""
+              + API_COMPATIBILITY_MODE_LEGACY
+              + "\", but the "
+              + CONFIG_FILE_AUTH_USERNAME_KEY
+              + " and "
+              + CONFIG_FILE_AUTH_PASSWORD_KEY
+              + " configuration fields have not been configured.");
       allLoaded = false;
     }
     return allLoaded;

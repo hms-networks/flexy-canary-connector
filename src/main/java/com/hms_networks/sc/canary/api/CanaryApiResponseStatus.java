@@ -90,19 +90,27 @@ public class CanaryApiResponseStatus {
 
   /**
    * Static status string that is returned from Canary API requests when message's status are set to
-   * 'bad user token'.
+   * 'bad user token'. Only returned by Canary versions before 24.0.
    *
    * @since 1.0.0
    */
-  private static final String BAD_USER_TOKEN_STATUS_STRING = "BadUserToken";
+  public static final String BAD_USER_TOKEN_STATUS_STRING = "BadUserToken";
 
   /**
-   * Static status string that is returned from Canary API requests when message's status are set to
-   * 'bad session token'.
+   * Static status string that is returned from Canary API requests (Canary versions before 24.0)
+   * when message's status are set to 'bad session token'.
    *
    * @since 1.0.0
    */
   private static final String BAD_SESSION_TOKEN_STATUS_STRING = "BadSessionId";
+
+  /**
+   * Static status string that is returned from Canary API requests (Canary 24.0 and newer) when
+   * message's status are set to 'bad session token'.
+   *
+   * @since 1.0.5
+   */
+  private static final String BAD_SESSION_TOKEN_V24_STATUS_STRING = "BadSessionToken";
 
   /**
    * Enum value-like {@link CanaryApiResponseStatus} object representing the response status when
@@ -198,7 +206,8 @@ public class CanaryApiResponseStatus {
     if (statusStr.equals(GOOD_STATUS_STRING)) {
       status = GOOD_REQUEST;
     } else if (statusStr.equals(BAD_USER_TOKEN_STATUS_STRING)
-        || statusStr.equals(BAD_SESSION_TOKEN_STATUS_STRING)) {
+        || statusStr.equals(BAD_SESSION_TOKEN_STATUS_STRING)
+        || statusStr.equals(BAD_SESSION_TOKEN_V24_STATUS_STRING)) {
       status = BAD_TOKENS;
     } else if (statusStr.equals(ERROR_STATUS_STRING) || statusStr.equals(ERRORS_STATUS_STRING)) {
       status = ERROR;

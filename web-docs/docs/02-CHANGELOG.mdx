@@ -5,6 +5,20 @@ sidebar_label: Change Log
 toc_max_heading_level: 2
 ---
 
+## Version 1.0.5
+### Features
+- Added support for the Canary 24.0+ Store and Forward API, which uses API tokens instead of user
+  tokens, while retaining support for Canary versions before 24.0.
+  - Added the optional `ApiCompatibilityMode` configuration field (`Auto`, `Legacy`, or `ApiToken`).
+  - Added the optional `ApiToken` configuration field.
+  - `UserName` and `UserPassword` are now only required for `Legacy` authentication.
+### Bug Fixes
+- Recognize the `BadSessionToken` status returned by Canary 24.0+ for expired sessions.
+- Immediately request a new session when Canary reports an expired or invalid session, instead of
+  waiting for the local session timeout.
+### Other
+- Corrected the Sender API version listed in the documentation features (v1, not v2).
+
 ## Version 1.0.4
 ### Bug Fixes
 - Fixes issue where local timezone offset is only calculated at startup
